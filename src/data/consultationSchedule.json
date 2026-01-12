@@ -1,0 +1,360 @@
+[
+  {
+    "day": "Lundi",
+    "slots": [
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Port-Gentil",
+        "shortRoom": "Port-Gentil",
+        "location": "Port-Gentil",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Lambaréné",
+        "shortRoom": "Lambaréné",
+        "location": "Lambaréné",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "08:00",
+        "end": "13:00",
+        "room": "Salle de consultation Ntoum",
+        "shortRoom": "Ntoum",
+        "location": "Ntoum",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Serge"
+      },
+      {
+        "start": "08:00",
+        "end": "13:00",
+        "room": "Salle de consultation Okondja",
+        "shortRoom": "Okondja",
+        "location": "Okondja",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Yeni"
+      },
+      {
+        "start": "14:00",
+        "end": "17:00",
+        "room": "Salle de consultation Ndéndé",
+        "shortRoom": "Ndéndé",
+        "location": "Ndéndé",
+        "specialty": "ORL",
+        "doctor": "Dr Mamfumbi"
+      },
+      {
+        "start": "14:00",
+        "end": "18:00",
+        "room": "Salle de consultation Fougamou",
+        "shortRoom": "Fougamou",
+        "location": "Fougamou",
+        "specialty": "Gynécologie",
+        "doctor": "Dr Chitou"
+      }
+    ]
+  },
+  {
+    "day": "Mardi",
+    "slots": [
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Port-Gentil",
+        "shortRoom": "Port-Gentil",
+        "location": "Port-Gentil",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Lambaréné",
+        "shortRoom": "Lambaréné",
+        "location": "Lambaréné",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "14:00",
+        "end": "18:00",
+        "room": "Salle de consultation Ntoum",
+        "shortRoom": "Ntoum",
+        "location": "Ntoum",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Aloli"
+      },
+      {
+        "start": "08:00",
+        "end": "13:00",
+        "room": "Salle de consultation Okondja",
+        "shortRoom": "Okondja",
+        "location": "Okondja",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Yeni"
+      },
+      {
+        "start": "14:00",
+        "end": "18:00",
+        "room": "Salle de consultation Ndéndé",
+        "shortRoom": "Ndéndé",
+        "location": "Ndéndé",
+        "specialty": "ORL",
+        "doctor": "Dr Nzamba"
+      },
+      {
+        "start": "08:00",
+        "end": "14:00",
+        "room": "Salle de consultation Fougamou",
+        "shortRoom": "Fougamou",
+        "location": "Fougamou",
+        "specialty": "Gynécologie",
+        "doctor": "Dr Chitou"
+      }
+    ]
+  },
+  {
+    "day": "Mercredi",
+    "slots": [
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Port-Gentil",
+        "shortRoom": "Port-Gentil",
+        "location": "Port-Gentil",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Lambaréné",
+        "shortRoom": "Lambaréné",
+        "location": "Lambaréné",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "08:00",
+        "end": "14:00",
+        "room": "Salle de consultation Ntoum",
+        "shortRoom": "Ntoum",
+        "location": "Ntoum",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Serge"
+      },
+      {
+        "start": "15:00",
+        "end": "18:00",
+        "room": "Salle de consultation Okondja",
+        "shortRoom": "Okondja",
+        "location": "Okondja",
+        "specialty": "Pneumologie",
+        "doctor": "Dr Ibinga"
+      },
+      {
+        "start": "15:00",
+        "end": "18:00",
+        "room": "Salle de consultation Ndéndé",
+        "shortRoom": "Ndéndé",
+        "location": "Ndéndé",
+        "specialty": "ORL",
+        "doctor": "Dr Mamfumbi"
+      },
+      {
+        "start": "14:00",
+        "end": "19:00",
+        "room": "Salle de consultation Fougamou",
+        "shortRoom": "Fougamou",
+        "location": "Fougamou",
+        "specialty": "Gynécologie",
+        "doctor": "Dr Sonon"
+      }
+    ]
+  },
+  {
+    "day": "Jeudi",
+    "slots": [
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Port-Gentil",
+        "shortRoom": "Port-Gentil",
+        "location": "Port-Gentil",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Lambaréné",
+        "shortRoom": "Lambaréné",
+        "location": "Lambaréné",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "08:00",
+        "end": "14:00",
+        "room": "Salle de consultation Ntoum",
+        "shortRoom": "Ntoum",
+        "location": "Ntoum",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Serge"
+      },
+      {
+        "start": "08:00",
+        "end": "12:00",
+        "room": "Salle de consultation Okondja",
+        "shortRoom": "Okondja",
+        "location": "Okondja",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Yeni"
+      },
+      {
+        "start": "10:00",
+        "end": "14:00",
+        "room": "Salle de consultation Ndéndé",
+        "shortRoom": "Ndéndé",
+        "location": "Ndéndé",
+        "specialty": "Kinésithérapie",
+        "doctor": "Dr Okoumba"
+      },
+      {
+        "start": "14:00",
+        "end": "18:00",
+        "room": "Salle de consultation Fougamou",
+        "shortRoom": "Fougamou",
+        "location": "Fougamou",
+        "specialty": "Gynécologie",
+        "doctor": "Dr Maiga"
+      }
+    ]
+  },
+  {
+    "day": "Vendredi",
+    "slots": [
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Port-Gentil",
+        "shortRoom": "Port-Gentil",
+        "location": "Port-Gentil",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Lambaréné",
+        "shortRoom": "Lambaréné",
+        "location": "Lambaréné",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "08:00",
+        "end": "14:00",
+        "room": "Salle de consultation Ntoum",
+        "shortRoom": "Ntoum",
+        "location": "Ntoum",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Serge"
+      },
+      {
+        "start": "08:00",
+        "end": "13:00",
+        "room": "Salle de consultation Okondja",
+        "shortRoom": "Okondja",
+        "location": "Okondja",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Yeni"
+      },
+      {
+        "start": "15:00",
+        "end": "18:00",
+        "room": "Salle de consultation Ndéndé",
+        "shortRoom": "Ndéndé",
+        "location": "Ndéndé",
+        "specialty": "ORL",
+        "doctor": "Dr Nzamba"
+      },
+      {
+        "start": "15:00",
+        "end": "18:00",
+        "room": "Salle de consultation Fougamou",
+        "shortRoom": "Fougamou",
+        "location": "Fougamou",
+        "specialty": "Gynécologie",
+        "doctor": "Dr Sanon"
+      }
+    ]
+  },
+  {
+    "day": "Samedi",
+    "slots": [
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Port-Gentil",
+        "shortRoom": "Port-Gentil",
+        "location": "Port-Gentil",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "07:30",
+        "end": "16:30",
+        "room": "Salle de consultation Lambaréné",
+        "shortRoom": "Lambaréné",
+        "location": "Lambaréné",
+        "specialty": "Médecine générale",
+        "doctor": ""
+      },
+      {
+        "start": "08:00",
+        "end": "13:00",
+        "room": "Salle de consultation Ntoum",
+        "shortRoom": "Ntoum",
+        "location": "Ntoum",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Moussa"
+      },
+      {
+        "start": "09:00",
+        "end": "12:00",
+        "room": "Salle de consultation Okondja",
+        "shortRoom": "Okondja",
+        "location": "Okondja",
+        "specialty": "Pédiatrie",
+        "doctor": "Dr Yeni"
+      },
+      {
+        "start": "09:00",
+        "end": "12:00",
+        "room": "Salle de consultation Ndéndé",
+        "shortRoom": "Ndéndé",
+        "location": "Ndéndé",
+        "specialty": "ORL",
+        "doctor": "Dr Mamfumbi"
+      },
+      {
+        "start": "09:00",
+        "end": "13:00",
+        "room": "Salle de consultation Fougamou",
+        "shortRoom": "Fougamou",
+        "location": "Fougamou",
+        "specialty": "Gynécologie",
+        "doctor": "Dr Maiga"
+      }
+    ]
+  }
+]
+
+
+
+
