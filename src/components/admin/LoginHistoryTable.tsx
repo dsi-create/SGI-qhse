@@ -10,7 +10,7 @@ import { Icon } from "@/components/Icon";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { apiClient } from "@/integrations/api/client";
-import { showError } from "@/utils/toast";
+import { showError, showSuccess } from "@/utils/toast";
 
 interface LoginHistoryEntry {
   id: string;
@@ -42,6 +42,7 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
   const [offset, setOffset] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [errorSuggestion, setErrorSuggestion] = useState<string | null>(null);
+  const [creatingTable, setCreatingTable] = useState(false);
   
   // Filtres
   const [selectedUserId, setSelectedUserId] = useState<string>('all');
@@ -215,8 +216,43 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
                 <div className="mt-2 p-3 bg-gray-100 rounded text-sm">
                   <p className="font-semibold mb-1">Solution :</p>
                   <p>{errorSuggestion}</p>
+                  <div className="mt-3 flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={async () => {
+                        setCreatingTable(true);
+                        try {
+                          const result = await apiClient.createLoginHistoryTable();
+                          if (result.success || result.exists) {
+                            showSuccess(result.message || 'Table créée avec succès !');
+                            setErrorMessage(null);
+                            setErrorSuggestion(null);
+                            // Recharger les données
+                            await fetchLoginHistory();
+                          }
+                        } catch (err: any) {
+                          showError(err.message || 'Erreur lors de la création de la table');
+                        } finally {
+                          setCreatingTable(false);
+                        }
+                      }}
+                      disabled={creatingTable}
+                    >
+                      {creatingTable ? (
+                        <>
+                          <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
+                          Création en cours...
+                        </>
+                      ) : (
+                        <>
+                          <Icon name="Database" className="mr-2 h-4 w-4" />
+                          Créer la table automatiquement
+                        </>
+                      )}
+                    </Button>
+                  </div>
                   <p className="mt-2 text-xs text-gray-600">
-                    Fichier SQL à exécuter : <code className="bg-gray-200 px-1 rounded">database/create_login_history_table.sql</code>
+                    Ou exécutez manuellement : <code className="bg-gray-200 px-1 rounded">database/create_login_history_table.sql</code>
                   </p>
                 </div>
               )}

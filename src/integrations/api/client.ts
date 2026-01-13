@@ -80,6 +80,12 @@ class ApiClient {
     return this.request<{ loginHistory: any[]; total: number; limit: number; offset: number }>(`/auth/login-history?${queryParams.toString()}`);
   }
 
+  async createLoginHistoryTable() {
+    return this.request<{ message: string; success?: boolean; exists?: boolean }>('/auth/create-login-history-table', {
+      method: 'POST',
+    });
+  }
+
   async signUp(userData: any) {
     const data = await this.request<{ user: any; token: string }>('/auth/signup', {
       method: 'POST',

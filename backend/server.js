@@ -502,13 +502,16 @@ app.get('/api/auth/login-history', authenticateToken, async (req, res) => {
         "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'login_history'"
       );
       if (tables.length === 0) {
+        console.log('⚠️ Table login_history n\'existe pas');
         return res.status(503).json({ 
           error: 'La table login_history n\'existe pas encore. Veuillez exécuter le script SQL: database/create_login_history_table.sql',
           suggestion: 'Exécutez le script SQL pour créer la table: SOURCE database/create_login_history_table.sql;'
         });
       }
+      console.log('✅ Table login_history existe');
     } catch (tableCheckError) {
-      console.error('Erreur lors de la vérification de la table:', tableCheckError);
+      console.error('❌ Erreur lors de la vérification de la table:', tableCheckError);
+      console.error('Stack:', tableCheckError.stack);
     }
 
     const { limit = 100, offset = 0, userId, role, status, startDate, endDate } = req.query;
@@ -560,7 +563,11 @@ app.get('/api/auth/login-history', authenticateToken, async (req, res) => {
     query += ' ORDER BY lh.login_time DESC LIMIT ? OFFSET ?';
     queryParams.push(parseInt(limit), parseInt(offset));
 
+    console.log('🔵 Exécution de la requête login_history:', query.substring(0, 100) + '...');
+    console.log('🔵 Paramètres:', queryParams);
+    
     const [loginHistory] = await pool.execute(query, queryParams);
+    console.log('✅ Requête réussie,', loginHistory.length, 'entrées trouvées');
 
     // Compter le total pour la pagination
     let countQuery = `
@@ -600,20 +607,86 @@ app.get('/api/auth/login-history', authenticateToken, async (req, res) => {
       offset: parseInt(offset)
     });
   } catch (error) {
-    console.error('Erreur lors de la récupération de l\'historique des connexions:', error);
+    console.error('❌ Erreur lors de la récupération de l\'historique des connexions:');
+    console.error('Code:', error.code);
+    console.error('Message:', error.message);
     console.error('Stack trace:', error.stack);
     
     // Vérifier si c'est une erreur de table manquante
-    if (error.code === 'ER_NO_SUCH_TABLE' || error.message?.includes('login_history')) {
+    if (error.code === 'ER_NO_SUCH_TABLE' || error.message?.includes('login_history') || error.message?.includes("doesn't exist")) {
       return res.status(503).json({ 
         error: 'La table login_history n\'existe pas encore.',
-        suggestion: 'Exécutez le script SQL: SOURCE database/create_login_history_table.sql;'
+        suggestion: 'Exécutez le script SQL: SOURCE database/create_login_history_table.sql;',
+        sqlError: error.message
       });
     }
     
     res.status(500).json({ 
       error: 'Erreur serveur lors de la récupération de l\'historique',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      code: error.code || 'UNKNOWN_ERROR'
+    });
+  }
+});
+
+// Endpoint pour créer la table login_history si elle n'existe pas (admin uniquement)
+app.post('/api/auth/create-login-history-table', authenticateToken, async (req, res) => {
+  try {
+    // Vérifier que l'utilisateur est admin
+    if (req.user.role !== 'superadmin' && req.user.role !== 'superviseur_qhse') {
+      return res.status(403).json({ error: 'Accès refusé. Seuls les administrateurs peuvent créer la table.' });
+    }
+
+    // Vérifier si la table existe déjà
+    const [tables] = await pool.execute(
+      "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'login_history'"
+    );
+    
+    if (tables.length > 0) {
+      return res.json({ 
+        message: 'La table login_history existe déjà.',
+        exists: true
+      });
+    }
+
+    // Créer la table
+    const createTableSQL = `
+      CREATE TABLE IF NOT EXISTS login_history (
+        id VARCHAR(36) PRIMARY KEY,
+        user_id VARCHAR(36) NOT NULL,
+        username VARCHAR(100) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        role VARCHAR(50) NOT NULL,
+        ip_address VARCHAR(45),
+        user_agent TEXT,
+        login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        logout_time TIMESTAMP NULL,
+        session_duration INT NULL,
+        status ENUM('success', 'failed', 'expired') DEFAULT 'success',
+        failure_reason VARCHAR(255) NULL,
+        INDEX idx_user_id (user_id),
+        INDEX idx_email (email),
+        INDEX idx_login_time (login_time),
+        INDEX idx_role (role),
+        FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE
+      )
+    `;
+
+    await pool.execute(createTableSQL);
+    
+    console.log('✅ Table login_history créée avec succès');
+    
+    res.json({ 
+      message: 'Table login_history créée avec succès.',
+      success: true
+    });
+  } catch (error) {
+    console.error('❌ Erreur lors de la création de la table login_history:', error);
+    console.error('Stack:', error.stack);
+    res.status(500).json({ 
+      error: 'Erreur lors de la création de la table',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      code: error.code || 'UNKNOWN_ERROR'
     });
   }
 });
