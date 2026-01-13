@@ -253,6 +253,84 @@ export const TechnicienPolyvalentPortal = ({
           </CardContent>
         </Card>
 
+        <Card className="card-hover cursor-pointer" onClick={() => onNavigate('reportIncident')}>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Icon name="AlertCircle" className="text-red-600 mr-2" />
+              Signaler un Incident
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-4">Déclarer un incident général</p>
+            <div className="space-y-2">
+              <div className="flex items-center text-sm">
+                <Icon name="Check" className="text-red-600 mr-2" />
+                Signaler un problème
+              </div>
+              <div className="flex items-center text-sm">
+                <Icon name="Check" className="text-red-600 mr-2" />
+                Ajouter des photos
+              </div>
+              <div className="flex items-center text-sm">
+                <Icon name="Check" className="text-red-600 mr-2" />
+                Définir la priorité
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="card-hover cursor-pointer" onClick={() => onNavigate('reportSecurityIncident')}>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Icon name="Shield" className="text-blue-600 mr-2" />
+              Incident de Sécurité
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-4">Signaler un incident de sécurité</p>
+            <div className="space-y-2">
+              <div className="flex items-center text-sm">
+                <Icon name="Check" className="text-blue-600 mr-2" />
+                Vol, agression, intrusion
+              </div>
+              <div className="flex items-center text-sm">
+                <Icon name="Check" className="text-blue-600 mr-2" />
+                Dégradation, autre
+              </div>
+              <div className="flex items-center text-sm">
+                <Icon name="Check" className="text-blue-600 mr-2" />
+                Transmission au service sécurité
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="card-hover cursor-pointer" onClick={() => onNavigate('reportBiomedicalIncident')}>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Icon name="Stethoscope" className="text-teal-600 mr-2" />
+              Déclarer Équipement HS
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-4">Signaler un équipement biomédical défectueux</p>
+            <div className="space-y-2">
+              <div className="flex items-center text-sm">
+                <Icon name="Check" className="text-teal-600 mr-2" />
+                Défaut équipement médical
+              </div>
+              <div className="flex items-center text-sm">
+                <Icon name="Check" className="text-teal-600 mr-2" />
+                Maintenance préventive
+              </div>
+              <div className="flex items-center text-sm">
+                <Icon name="Check" className="text-teal-600 mr-2" />
+                Transmission au service biomédical
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
       </div>
 
       {/* Maintenances à venir */}
@@ -362,7 +440,7 @@ export const TechnicienPolyvalentPortal = ({
               <strong>Planning :</strong> Vous pouvez établir et gérer votre propre planning de tâches pour organiser vos interventions.
             </p>
             <p>
-              <strong>Incidents :</strong> Vous pouvez consulter les tickets QHSE qui vous ont été assignés ainsi que vos propres déclarations d'incidents et d'équipements.
+              <strong>Incidents :</strong> Vous pouvez déclarer des incidents (sécurité, entretien, biomédical) et consulter les tickets QHSE qui vous ont été assignés ainsi que vos propres déclarations.
             </p>
             <p>
               <strong>Maintenances :</strong> Consultez l'historique des maintenances et suivez les interventions planifiées.

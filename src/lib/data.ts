@@ -94,7 +94,7 @@ export const roleConfig: Record<UserRole, { id: string; name: string; icon: stri
   // Rôle technicien polyvalent (homme à tout faire)
   technicien_polyvalent: [
     { id: 'portalTechnicienPolyvalent', name: 'Portail Technicien Polyvalent', icon: 'Wrench' },
-    ...findPerms(['maintenanceHistory', 'myTasks', 'planningTasks', 'personalInfo', 'qhseTickets'])
+    ...findPerms(['maintenanceHistory', 'myTasks', 'planningTasks', 'personalInfo', 'qhseTickets', 'reportIncident', 'reportSecurityIncident', 'reportMaintenanceIncident', 'reportBiomedicalIncident'])
   ],
 };
 
