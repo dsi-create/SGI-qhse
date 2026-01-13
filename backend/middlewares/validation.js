@@ -104,6 +104,17 @@ const validatePasswordUpdate = (req, res, next) => {
   next();
 };
 
+// Middleware de validation pour la réinitialisation de mot de passe par admin (moins restrictif)
+const validateAdminPasswordReset = (req, res, next) => {
+  const { password } = req.body;
+
+  if (!password || password.length < 6) {
+    return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caractères' });
+  }
+
+  next();
+};
+
 // Middleware de validation pour les incidents
 const validateIncident = (req, res, next) => {
   const { type, description, priorite, service, lieu } = req.body;
@@ -237,6 +248,7 @@ module.exports = {
   validateSignup,
   validateSignin,
   validatePasswordUpdate,
+  validateAdminPasswordReset,
   validateIncident,
   validateVisitor,
   rateLimitLogin,

@@ -15,6 +15,7 @@ const {
   validateSignup,
   validateSignin,
   validatePasswordUpdate,
+  validateAdminPasswordReset,
   validateIncident,
   validateVisitor,
   rateLimitLogin,
@@ -607,7 +608,7 @@ app.put('/api/auth/password', authenticateToken, validatePasswordUpdate, async (
 });
 
 // Endpoint pour réinitialiser le mot de passe d'un utilisateur (admin uniquement)
-app.put('/api/auth/reset-user-password', authenticateToken, validatePasswordUpdate, async (req, res) => {
+app.put('/api/auth/reset-user-password', authenticateToken, validateAdminPasswordReset, async (req, res) => {
   try {
     // Vérifier que l'utilisateur est admin
     if (req.user.role !== 'superadmin' && req.user.role !== 'superviseur_qhse') {
