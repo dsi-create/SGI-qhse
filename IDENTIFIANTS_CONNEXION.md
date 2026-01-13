@@ -110,6 +110,15 @@
 
 ---
 
+### 🔧 12. Technicien Polyvalent
+- **Nom d'utilisateur** : `technicien_polyvalent`
+- **Email** : `technicien.polyvalent@hospital.com`
+- **Mot de passe** : `technicien123`
+- **Rôle** : Technicien Polyvalent
+- **Accès** : Portail technicien polyvalent, historique maintenance, mes tâches, planning tâches, tickets QHSE
+
+---
+
 ## 📊 Récapitulatif Rapide
 
 | Rôle | Nom d'utilisateur | Mot de passe |
@@ -126,6 +135,7 @@
 | Technicien | `technicien` | `technicien123` |
 | Superviseur Technicien | `superviseur_technicien` | `superviseur_technicien123` |
 | Responsable Biomédical | `biomedical` | `biomedical123` |
+| Technicien Polyvalent | `technicien_polyvalent` | `technicien123` |
 
 ---
 
