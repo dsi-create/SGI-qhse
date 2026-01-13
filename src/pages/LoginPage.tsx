@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Icon } from '@/components/Icon';
-import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 
 interface LoginPageProps {
   onLogin: (email: string, pass: string) => Promise<boolean>;
@@ -14,7 +13,6 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,22 +83,8 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
               <Icon name="LogIn" className="mr-2 h-5 w-5" /> Se connecter
             </Button>
           </form>
-          <div className="mt-6 text-center">
-            <Button 
-              variant="link" 
-              className="text-cyan-600 hover:text-cyan-700 font-medium" 
-              onClick={() => setIsForgotPasswordOpen(true)}
-            >
-              Mot de passe oublié ?
-            </Button>
-          </div>
         </CardContent>
       </Card>
-
-      <ForgotPasswordDialog
-        isOpen={isForgotPasswordOpen}
-        onOpenChange={setIsForgotPasswordOpen}
-      />
     </div>
   );
 };
