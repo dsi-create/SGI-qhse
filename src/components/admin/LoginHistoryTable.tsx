@@ -41,9 +41,9 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
   const [offset, setOffset] = useState(0);
   
   // Filtres
-  const [selectedUserId, setSelectedUserId] = useState<string>('');
-  const [selectedRole, setSelectedRole] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [selectedUserId, setSelectedUserId] = useState<string>('all');
+  const [selectedRole, setSelectedRole] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -52,9 +52,9 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
     try {
       setLoading(true);
       const params: any = { limit, offset };
-      if (selectedUserId) params.userId = selectedUserId;
-      if (selectedRole) params.role = selectedRole;
-      if (selectedStatus) params.status = selectedStatus;
+      if (selectedUserId && selectedUserId !== 'all') params.userId = selectedUserId;
+      if (selectedRole && selectedRole !== 'all') params.role = selectedRole;
+      if (selectedStatus && selectedStatus !== 'all') params.status = selectedStatus;
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
 
@@ -137,7 +137,7 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
               <SelectValue placeholder="Utilisateur" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Tous les utilisateurs</SelectItem>
+              <SelectItem value="all">Tous les utilisateurs</SelectItem>
               {userList.map((user: any) => (
                 <SelectItem key={user.id} value={user.id}>
                   {user.username} ({user.email})
@@ -150,7 +150,7 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
               <SelectValue placeholder="Rôle" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Tous les rôles</SelectItem>
+              <SelectItem value="all">Tous les rôles</SelectItem>
               {uniqueRoles.map(role => (
                 <SelectItem key={role} value={role}>
                   {role}
@@ -163,7 +163,7 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
               <SelectValue placeholder="Statut" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Tous les statuts</SelectItem>
+              <SelectItem value="all">Tous les statuts</SelectItem>
               <SelectItem value="success">Succès</SelectItem>
               <SelectItem value="failed">Échec</SelectItem>
               <SelectItem value="expired">Expiré</SelectItem>

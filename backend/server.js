@@ -496,6 +496,21 @@ app.get('/api/auth/login-history', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Accès refusé. Seuls les administrateurs peuvent consulter l\'historique des connexions.' });
     }
 
+    // Vérifier si la table login_history existe
+    try {
+      const [tables] = await pool.execute(
+        "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'login_history'"
+      );
+      if (tables.length === 0) {
+        return res.status(503).json({ 
+          error: 'La table login_history n\'existe pas encore. Veuillez exécuter le script SQL: database/create_login_history_table.sql',
+          suggestion: 'Exécutez le script SQL pour créer la table: SOURCE database/create_login_history_table.sql;'
+        });
+      }
+    } catch (tableCheckError) {
+      console.error('Erreur lors de la vérification de la table:', tableCheckError);
+    }
+
     const { limit = 100, offset = 0, userId, role, status, startDate, endDate } = req.query;
     
     let query = `
@@ -586,7 +601,20 @@ app.get('/api/auth/login-history', authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Erreur lors de la récupération de l\'historique des connexions:', error);
-    res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'historique' });
+    console.error('Stack trace:', error.stack);
+    
+    // Vérifier si c'est une erreur de table manquante
+    if (error.code === 'ER_NO_SUCH_TABLE' || error.message?.includes('login_history')) {
+      return res.status(503).json({ 
+        error: 'La table login_history n\'existe pas encore.',
+        suggestion: 'Exécutez le script SQL: SOURCE database/create_login_history_table.sql;'
+      });
+    }
+    
+    res.status(500).json({ 
+      error: 'Erreur serveur lors de la récupération de l\'historique',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
