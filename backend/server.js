@@ -606,6 +606,42 @@ app.put('/api/auth/password', authenticateToken, validatePasswordUpdate, async (
   }
 });
 
+// Endpoint pour réinitialiser le mot de passe d'un utilisateur (admin uniquement)
+app.put('/api/auth/reset-user-password', authenticateToken, validatePasswordUpdate, async (req, res) => {
+  try {
+    // Vérifier que l'utilisateur est admin
+    if (req.user.role !== 'superadmin' && req.user.role !== 'superviseur_qhse') {
+      return res.status(403).json({ error: 'Accès refusé. Seuls les administrateurs peuvent réinitialiser les mots de passe.' });
+    }
+
+    const { userId, password } = req.body;
+
+    if (!userId || !password) {
+      return res.status(400).json({ error: 'User ID et mot de passe requis' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caractères' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const [result] = await pool.execute(
+      'UPDATE profiles SET password_hash = ? WHERE id = ?',
+      [passwordHash, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    res.json({ message: 'Mot de passe réinitialisé avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la réinitialisation du mot de passe:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 // Routes pour les profils
 app.get('/api/profiles', authenticateToken, async (req, res) => {
   try {

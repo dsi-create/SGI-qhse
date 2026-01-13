@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icon } from "@/components/Icon";
-import { supabase } from '@/integrations/supabase/client';
 import { showError, showSuccess } from '@/utils/toast';
 
 interface ForgotPasswordDialogProps {
@@ -17,19 +16,20 @@ export const ForgotPasswordDialog = ({ isOpen, onOpenChange }: ForgotPasswordDia
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    // Note: La fonctionnalité de réinitialisation par email n'est pas encore implémentée dans le backend
+    // Pour l'instant, on affiche un message informatif
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/login`, // Redirect back to login after reset
-    });
+    
+    // Simuler un délai pour l'UX
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    showError("La réinitialisation de mot de passe par email n'est pas encore disponible. Veuillez contacter un administrateur.");
     setLoading(false);
-
-    if (error) {
-      showError(error.message);
-    } else {
-      showSuccess("Un e-mail de réinitialisation de mot de passe a été envoyé à votre adresse.");
-      onOpenChange(false);
-      setEmail('');
-    }
+    onOpenChange(false);
+    setEmail('');
+    
+    // TODO: Implémenter l'envoi d'email de réinitialisation via le backend
+    // Cela nécessiterait un service d'email (SMTP, SendGrid, etc.)
   };
 
   return (
