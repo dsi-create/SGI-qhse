@@ -7,6 +7,8 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PortalExcelActions } from "@/components/shared/PortalExcelActions";
 
+// UserPortal component for generic user portals
+
 interface PortalProps {
   user: User;
   incidents: Incident[];
