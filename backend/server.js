@@ -366,6 +366,8 @@ app.post('/api/auth/signup', validateSignup, async (req, res) => {
 app.post('/api/auth/signin', rateLimitLogin, validateSignin, async (req, res) => {
   try {
     const { email, password } = req.body;
+    const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'unknown';
+    const userAgent = req.headers['user-agent'] || 'unknown';
 
     const [users] = await pool.execute(
       'SELECT * FROM profiles WHERE email = ?',
@@ -373,6 +375,16 @@ app.post('/api/auth/signin', rateLimitLogin, validateSignin, async (req, res) =>
     );
 
     if (users.length === 0) {
+      // Enregistrer la tentative échouée
+      try {
+        await pool.execute(
+          `INSERT INTO login_history (id, user_id, username, email, role, ip_address, user_agent, status, failure_reason)
+           VALUES (?, ?, ?, ?, ?, ?, ?, 'failed', 'Email non trouvé')`,
+          [uuidv4(), 'unknown', email, email, 'unknown', ipAddress, userAgent]
+        );
+      } catch (logError) {
+        console.error('Erreur lors de l\'enregistrement de la tentative échouée:', logError);
+      }
       return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     }
 
@@ -380,12 +392,34 @@ app.post('/api/auth/signin', rateLimitLogin, validateSignin, async (req, res) =>
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
 
     if (!isValidPassword) {
+      // Enregistrer la tentative échouée
+      try {
+        await pool.execute(
+          `INSERT INTO login_history (id, user_id, username, email, role, ip_address, user_agent, status, failure_reason)
+           VALUES (?, ?, ?, ?, ?, ?, ?, 'failed', 'Mot de passe incorrect')`,
+          [uuidv4(), user.id, user.username, user.email, user.role || 'unknown', ipAddress, userAgent]
+        );
+      } catch (logError) {
+        console.error('Erreur lors de l\'enregistrement de la tentative échouée:', logError);
+      }
       return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     }
 
     // Réinitialiser le compteur de tentatives en cas de succès
     if (req.rateLimitKey) {
       loginAttempts.delete(req.rateLimitKey);
+    }
+
+    // Enregistrer la connexion réussie
+    try {
+      await pool.execute(
+        `INSERT INTO login_history (id, user_id, username, email, role, ip_address, user_agent, status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'success')`,
+        [uuidv4(), user.id, user.username, user.email, user.role || 'unknown', ipAddress, userAgent]
+      );
+    } catch (logError) {
+      console.error('Erreur lors de l\'enregistrement de la connexion:', logError);
+      // Ne pas bloquer la connexion si l'enregistrement échoue
     }
 
     const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
@@ -422,8 +456,137 @@ app.post('/api/auth/reset-login-attempts', (req, res) => {
   }
 });
 
-app.post('/api/auth/signout', authenticateToken, (req, res) => {
-  res.json({ message: 'Déconnexion réussie' });
+app.post('/api/auth/signout', authenticateToken, async (req, res) => {
+  try {
+    // Mettre à jour le logout_time pour la dernière connexion de l'utilisateur
+    const userId = req.user.id;
+    const [lastLogin] = await pool.execute(
+      `SELECT id, login_time FROM login_history 
+       WHERE user_id = ? AND status = 'success' AND logout_time IS NULL 
+       ORDER BY login_time DESC LIMIT 1`,
+      [userId]
+    );
+    
+    if (lastLogin.length > 0) {
+      const loginTime = new Date(lastLogin[0].login_time);
+      const logoutTime = new Date();
+      const sessionDuration = Math.floor((logoutTime - loginTime) / 1000);
+      
+      await pool.execute(
+        `UPDATE login_history 
+         SET logout_time = ?, session_duration = ? 
+         WHERE id = ?`,
+        [logoutTime, sessionDuration, lastLogin[0].id]
+      );
+    }
+    
+    res.json({ message: 'Déconnexion réussie' });
+  } catch (error) {
+    console.error('Erreur lors de la déconnexion:', error);
+    res.json({ message: 'Déconnexion réussie' }); // Ne pas bloquer la déconnexion
+  }
+});
+
+// Endpoint pour récupérer l'historique des connexions (admin uniquement)
+app.get('/api/auth/login-history', authenticateToken, async (req, res) => {
+  try {
+    // Vérifier que l'utilisateur est admin
+    if (req.user.role !== 'superadmin' && req.user.role !== 'superviseur_qhse') {
+      return res.status(403).json({ error: 'Accès refusé. Seuls les administrateurs peuvent consulter l\'historique des connexions.' });
+    }
+
+    const { limit = 100, offset = 0, userId, role, status, startDate, endDate } = req.query;
+    
+    let query = `
+      SELECT 
+        lh.id,
+        lh.user_id,
+        lh.username,
+        lh.email,
+        lh.role,
+        lh.ip_address,
+        lh.user_agent,
+        lh.login_time,
+        lh.logout_time,
+        lh.session_duration,
+        lh.status,
+        lh.failure_reason,
+        p.first_name,
+        p.last_name,
+        p.service
+      FROM login_history lh
+      LEFT JOIN profiles p ON lh.user_id = p.id
+      WHERE 1=1
+    `;
+    const queryParams = [];
+
+    if (userId) {
+      query += ' AND lh.user_id = ?';
+      queryParams.push(userId);
+    }
+    if (role) {
+      query += ' AND lh.role = ?';
+      queryParams.push(role);
+    }
+    if (status) {
+      query += ' AND lh.status = ?';
+      queryParams.push(status);
+    }
+    if (startDate) {
+      query += ' AND lh.login_time >= ?';
+      queryParams.push(startDate);
+    }
+    if (endDate) {
+      query += ' AND lh.login_time <= ?';
+      queryParams.push(endDate);
+    }
+
+    query += ' ORDER BY lh.login_time DESC LIMIT ? OFFSET ?';
+    queryParams.push(parseInt(limit), parseInt(offset));
+
+    const [loginHistory] = await pool.execute(query, queryParams);
+
+    // Compter le total pour la pagination
+    let countQuery = `
+      SELECT COUNT(*) as total
+      FROM login_history lh
+      WHERE 1=1
+    `;
+    const countParams = [];
+    if (userId) {
+      countQuery += ' AND lh.user_id = ?';
+      countParams.push(userId);
+    }
+    if (role) {
+      countQuery += ' AND lh.role = ?';
+      countParams.push(role);
+    }
+    if (status) {
+      countQuery += ' AND lh.status = ?';
+      countParams.push(status);
+    }
+    if (startDate) {
+      countQuery += ' AND lh.login_time >= ?';
+      countParams.push(startDate);
+    }
+    if (endDate) {
+      countQuery += ' AND lh.login_time <= ?';
+      countParams.push(endDate);
+    }
+
+    const [countResult] = await pool.execute(countQuery, countParams);
+    const total = countResult[0].total;
+
+    res.json({
+      loginHistory,
+      total,
+      limit: parseInt(limit),
+      offset: parseInt(offset)
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération de l\'historique des connexions:', error);
+    res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'historique' });
+  }
 });
 
 app.put('/api/auth/password', authenticateToken, validatePasswordUpdate, async (req, res) => {

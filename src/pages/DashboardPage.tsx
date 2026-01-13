@@ -19,6 +19,7 @@ import { SecurityDashboard } from '@/components/dashboards/SecurityDashboard';
 import ReportProblemForm from '@/components/maintenance/ReportProblemForm';
 import AssignedTasksTable from '@/components/maintenance/AssignedTasksTable';
 import { UserManagement } from '@/components/qhse/UserManagement';
+import { LoginHistoryTable } from '@/components/admin/LoginHistoryTable';
 import { TechnicianInterventionsTable } from '@/components/technician/TechnicianInterventionsTable';
 import { TechnicianHistoryTable } from '@/components/technician/TechnicianHistoryTable';
 import { InterventionReportDialog } from '@/components/technician/InterventionReportDialog';
@@ -727,6 +728,20 @@ const DashboardPage = (props: DashboardPageProps) => {
           );
         }
         return <UserManagement currentUserRole={user.role} users={props.users} addUser={props.addUser} deleteUser={props.deleteUser} updateUserPermissions={props.updateUserPermissions} />;
+      case 'loginHistory':
+        if (user.role !== 'superadmin' && user.role !== 'superviseur_qhse') {
+          return (
+            <div className="p-6">
+              <Alert variant="destructive" className="max-w-xl">
+                <AlertTitle>Accès refusé</AlertTitle>
+                <AlertDescription>
+                  L'historique des connexions est réservé aux administrateurs.
+                </AlertDescription>
+              </Alert>
+            </div>
+          );
+        }
+        return <LoginHistoryTable users={props.users} />;
       case 'securityIncidents':
         return <SecurityIncidentsTable incidents={props.incidents.filter(i => i.service === 'securite')} allIncidents={props.incidents} />;
       case 'maintenanceHistory':

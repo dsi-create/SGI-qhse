@@ -43,6 +43,7 @@ export const allPermissions = [
   { id: 'qhseLaundry', name: 'Suivi Buanderie', icon: 'Shirt' },
   { id: 'qhseRisks', name: 'Gestion des Risques', icon: 'AlertTriangle' },
   { id: 'qhseReports', name: 'Reporting & Exportation', icon: 'FileBarChart' },
+  { id: 'loginHistory', name: 'Historique des Connexions', icon: 'History' },
 ];
 
 const findPerms = (ids: string[]) => allPermissions.filter(p => ids.includes(p.id));

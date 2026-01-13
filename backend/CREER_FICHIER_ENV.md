@@ -73,3 +73,4 @@ Vous devriez voir :
 - Vérifiez que MySQL est démarré dans WAMP
 - Vérifiez le port dans WAMP (généralement 3306)
 
+

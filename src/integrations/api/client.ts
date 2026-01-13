@@ -68,6 +68,18 @@ class ApiClient {
     return data;
   }
 
+  async getLoginHistory(params?: { limit?: number; offset?: number; userId?: string; role?: string; status?: string; startDate?: string; endDate?: string }) {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, String(value));
+        }
+      });
+    }
+    return this.request<{ loginHistory: any[]; total: number; limit: number; offset: number }>(`/auth/login-history?${queryParams.toString()}`);
+  }
+
   async signUp(userData: any) {
     const data = await this.request<{ user: any; token: string }>('/auth/signup', {
       method: 'POST',
