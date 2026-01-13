@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Icon } from "@/components/Icon";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -39,6 +40,8 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
   const [total, setTotal] = useState(0);
   const [limit, setLimit] = useState(100);
   const [offset, setOffset] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorSuggestion, setErrorSuggestion] = useState<string | null>(null);
   
   // Filtres
   const [selectedUserId, setSelectedUserId] = useState<string>('all');
@@ -61,9 +64,27 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
       const data = await apiClient.getLoginHistory(params);
       setLoginHistory(data.loginHistory || []);
       setTotal(data.total || 0);
+      setErrorMessage(null);
+      setErrorSuggestion(null);
     } catch (error: any) {
       console.error('Erreur:', error);
-      showError(error.message || 'Erreur lors de la récupération de l\'historique');
+      const errorMsg = error.response?.data?.error || error.message || 'Erreur lors de la récupération de l\'historique';
+      const suggestion = error.response?.data?.suggestion;
+      
+      setErrorMessage(errorMsg);
+      setErrorSuggestion(suggestion || null);
+      
+      if (suggestion) {
+        showError(`${errorMsg}. ${suggestion}`);
+      } else {
+        showError(errorMsg);
+      }
+      
+      // Si la table n'existe pas, afficher un message dans l'UI
+      if (errorMsg.includes('login_history') || error.response?.status === 503) {
+        setLoginHistory([]);
+        setTotal(0);
+      }
     } finally {
       setLoading(false);
     }
@@ -182,6 +203,26 @@ export const LoginHistoryTable = ({ users }: LoginHistoryTableProps) => {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
+
+        {/* Message d'erreur si la table n'existe pas */}
+        {errorMessage && (errorMessage.includes('login_history') || errorSuggestion) && (
+          <Alert variant="destructive" className="mb-6">
+            <Icon name="AlertTriangle" className="h-4 w-4" />
+            <AlertTitle>Table manquante</AlertTitle>
+            <AlertDescription>
+              <p className="mb-2">{errorMessage}</p>
+              {errorSuggestion && (
+                <div className="mt-2 p-3 bg-gray-100 rounded text-sm">
+                  <p className="font-semibold mb-1">Solution :</p>
+                  <p>{errorSuggestion}</p>
+                  <p className="mt-2 text-xs text-gray-600">
+                    Fichier SQL à exécuter : <code className="bg-gray-200 px-1 rounded">database/create_login_history_table.sql</code>
+                  </p>
+                </div>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Table */}
         {loading ? (
