@@ -560,10 +560,12 @@ app.get('/api/auth/login-history', authenticateToken, async (req, res) => {
       queryParams.push(endDate);
     }
 
-    query += ' ORDER BY lh.login_time DESC LIMIT ? OFFSET ?';
-    queryParams.push(parseInt(limit), parseInt(offset));
+    // LIMIT et OFFSET doivent être intégrés directement dans la requête, pas comme paramètres
+    const limitValue = parseInt(limit) || 100;
+    const offsetValue = parseInt(offset) || 0;
+    query += ` ORDER BY lh.login_time DESC LIMIT ${limitValue} OFFSET ${offsetValue}`;
 
-    console.log('🔵 Exécution de la requête login_history:', query.substring(0, 100) + '...');
+    console.log('🔵 Exécution de la requête login_history:', query.substring(0, 150) + '...');
     console.log('🔵 Paramètres:', queryParams);
     
     const [loginHistory] = await pool.execute(query, queryParams);
