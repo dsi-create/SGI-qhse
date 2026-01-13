@@ -94,18 +94,25 @@ export const useUserManagement = ({ setUsers, fetchAllProfiles }: UseUserManagem
         return;
       }
 
-      await apiClient.updateProfile(userToUpdate.id, {
+      const response = await apiClient.updateProfile(userToUpdate.id, {
         added_permissions: permissions.added,
         removed_permissions: permissions.removed,
       });
 
-      // Update local state
+      // Utiliser le profil retourné par le serveur ou rafraîchir depuis le serveur
+      const updatedProfile = response.profile || await apiClient.getProfile(userToUpdate.id);
+      
+      // Update local state avec les données du serveur
       setUsers(prev => ({
         ...prev,
         [username]: {
           ...prev[username],
-          added_permissions: permissions.added,
-          removed_permissions: permissions.removed,
+          added_permissions: Array.isArray(updatedProfile.added_permissions) 
+            ? updatedProfile.added_permissions 
+            : (updatedProfile.added_permissions ? JSON.parse(updatedProfile.added_permissions) : []),
+          removed_permissions: Array.isArray(updatedProfile.removed_permissions) 
+            ? updatedProfile.removed_permissions 
+            : (updatedProfile.removed_permissions ? JSON.parse(updatedProfile.removed_permissions) : []),
         }
       }));
       showSuccess("Les permissions de l'utilisateur ont été mises à jour.");

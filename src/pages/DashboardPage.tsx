@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { User, Incident, IncidentStatus, InterventionReport, IncidentPriority, Visitor, BiomedicalEquipment, MaintenanceTask, MaintenanceTaskStatus, Notification, UserRole, Users, Room, Booking, Doctor, BiomedicalEquipmentStatus, PlannedTask, PlannedTaskStatus, Civility } from '@/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { roleConfig } from '@/lib/data';
+import { roleConfig, allPermissions } from '@/lib/data';
 import { NotificationBell } from '@/components/shared/NotificationBell';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -312,7 +312,25 @@ const BiomedicalDashboard = ({ biomedicalEquipment, addBiomedicalEquipment, upda
 const DashboardPage = (props: DashboardPageProps) => {
   const { user, username, onLogout, notifications, markNotificationsAsRead, markNotificationAsRead, onUpdatePassword } = props;
   
-  const userTabs = roleConfig[user.role];
+  // Calculer les onglets disponibles en tenant compte des permissions ajoutées/retirées
+  const userTabs = useMemo(() => {
+    const baseTabs = roleConfig[user.role] || [];
+    const basePermissionIds = new Set(baseTabs.map(tab => tab.id));
+    
+    // Retirer les permissions retirées
+    user.removed_permissions?.forEach(permId => basePermissionIds.delete(permId));
+    
+    // Ajouter les permissions ajoutées
+    user.added_permissions?.forEach(permId => {
+      const permission = allPermissions.find(p => p.id === permId);
+      if (permission) {
+        basePermissionIds.add(permId);
+      }
+    });
+    
+    // Retourner les onglets correspondants
+    return allPermissions.filter(perm => basePermissionIds.has(perm.id));
+  }, [user.role, user.removed_permissions, user.added_permissions]);
   
   // Déterminer le portail par défaut selon le rôle
   const getDefaultPortal = () => {

@@ -6,7 +6,7 @@ export const allPermissions = [
   { id: 'portalAgentEntretien', name: 'Portail Agent Entretien', icon: 'Home' },
   { id: 'portalSuperviseurQHSE', name: 'Portail Superviseur QHSE', icon: 'Home' },
   { id: 'portalSuperviseurSecurite', name: 'Portail Superviseur Sécurité', icon: 'Home' },
-  { id: 'portalUser', name: 'Portail Utilisateur', icon: 'Home' },
+  { id: 'portalUser', name: 'Portail Employé', icon: 'Home' },
   { id: 'portalBiomedical', name: 'Portail Biomédical', icon: 'HeartPulse' },
   { id: 'portalMedecin', name: 'Portail Médecin', icon: 'Home' },
   { id: 'portalSecretaire', name: 'Portail Secrétaire', icon: 'Home' },

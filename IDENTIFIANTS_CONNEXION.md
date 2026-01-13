@@ -119,6 +119,16 @@
 
 ---
 
+### 👤 13. Employé (Portail Employé)
+- **Nom d'utilisateur** : `employe`
+- **Email** : `employe@hospital.com`
+- **Mot de passe** : `employe123`
+- **Rôle** : Employé
+- **Nom complet** : M. Employé
+- **Accès** : Portail employé, signalement d'incidents, profil personnel
+
+---
+
 ## 📊 Récapitulatif Rapide
 
 | Rôle | Nom d'utilisateur | Mot de passe |
@@ -136,6 +146,7 @@
 | Superviseur Technicien | `superviseur_technicien` | `superviseur_technicien123` |
 | Responsable Biomédical | `biomedical` | `biomedical123` |
 | Technicien Polyvalent | `technicien_polyvalent` | `technicien123` |
+| Employé (Portail Employé) | `employe` | `employe123` |
 
 ---
 

@@ -793,7 +793,34 @@ app.put('/api/profiles/:id', authenticateToken, async (req, res) => {
       'UPDATE profiles SET added_permissions = ?, removed_permissions = ? WHERE id = ?',
       [JSON.stringify(added_permissions || []), JSON.stringify(removed_permissions || []), req.params.id]
     );
-    res.json({ message: 'Profil mis à jour' });
+    
+    // Récupérer le profil mis à jour pour le retourner
+    const [updatedProfiles] = await pool.execute(
+      'SELECT id, username, email, first_name, last_name, civility, role, service, pin, added_permissions, removed_permissions FROM profiles WHERE id = ?',
+      [req.params.id]
+    );
+    
+    if (updatedProfiles.length === 0) {
+      return res.status(404).json({ error: 'Profil non trouvé' });
+    }
+    
+    const profile = updatedProfiles[0];
+    res.json({
+      message: 'Profil mis à jour',
+      profile: {
+        id: profile.id,
+        username: profile.username,
+        email: profile.email,
+        first_name: profile.first_name,
+        last_name: profile.last_name,
+        civility: profile.civility,
+        role: profile.role,
+        service: profile.service,
+        pin: profile.pin,
+        added_permissions: safeJsonParse(profile.added_permissions, []),
+        removed_permissions: safeJsonParse(profile.removed_permissions, [])
+      }
+    });
   } catch (error) {
     console.error('Erreur lors de la mise à jour du profil:', error);
     res.status(500).json({ error: 'Erreur serveur' });
