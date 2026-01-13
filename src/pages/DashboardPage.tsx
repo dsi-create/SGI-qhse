@@ -615,6 +615,7 @@ const DashboardPage = (props: DashboardPageProps) => {
           incidents={filteredData.incidents}
           notifications={props.notifications}
           onNavigate={setActiveTab}
+          onDeleteIncident={props.deleteIncident}
         />;
       
       // Modules existants

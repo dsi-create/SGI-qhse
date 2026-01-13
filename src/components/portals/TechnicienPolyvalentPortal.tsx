@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/Icon";
 import { DashboardCard } from "@/components/shared/DashboardCard";
+import { IncidentHistoryCard } from "@/components/shared/IncidentHistoryCard";
 import { User, MaintenanceTask, Incident, Notification } from "@/types";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -16,6 +17,7 @@ interface PortalProps {
   incidents: Incident[];
   notifications: Notification[];
   onNavigate: (tabId: string) => void;
+  onDeleteIncident?: (incidentId: string) => void;
 }
 
 // Portail Technicien Polyvalent
@@ -24,7 +26,8 @@ export const TechnicienPolyvalentPortal = ({
   maintenanceTasks, 
   incidents, 
   notifications,
-  onNavigate 
+  onNavigate,
+  onDeleteIncident 
 }: PortalProps) => {
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const today = new Date();
@@ -35,6 +38,10 @@ export const TechnicienPolyvalentPortal = ({
     pendingIncidents: incidents.filter(i => i.statut === 'nouveau' || i.statut === 'cours' || i.statut === 'attente').length,
     myTasks: 0, // Sera calculé depuis les plannedTasks si disponible
   };
+
+  // Incidents déclarés par l'utilisateur
+  const myReportedIncidents = incidents.filter(i => i.reported_by === user.id && i.service !== 'biomedical');
+  const myEquipmentDeclarations = incidents.filter(i => i.reported_by === user.id && i.service === 'biomedical');
 
   const handleGenerateReport = async () => {
     setIsGeneratingReport(true);
@@ -318,6 +325,26 @@ export const TechnicienPolyvalentPortal = ({
         </Card>
       )}
 
+      {/* Mes incidents déclarés */}
+      <IncidentHistoryCard
+        title="Mes incidents signalés"
+        subtitle="Tickets QHSE ou maintenance déclarés avec votre compte"
+        incidents={myReportedIncidents}
+        allIncidents={incidents}
+        emptyMessage="Vous n'avez pas encore déclaré d'incident."
+        onDelete={onDeleteIncident}
+      />
+
+      {/* Mes déclarations d'équipement */}
+      <IncidentHistoryCard
+        title="Mes déclarations d'équipement"
+        subtitle="Suivi de vos signalements biomédicaux"
+        incidents={myEquipmentDeclarations}
+        allIncidents={incidents}
+        emptyMessage="Vous n'avez pas encore déclaré d'équipement en panne."
+        onDelete={onDeleteIncident}
+      />
+
       {/* Informations importantes */}
       <Card className="bg-cyan-50 border-cyan-200">
         <CardHeader>
@@ -335,7 +362,7 @@ export const TechnicienPolyvalentPortal = ({
               <strong>Planning :</strong> Vous pouvez établir et gérer votre propre planning de tâches pour organiser vos interventions.
             </p>
             <p>
-              <strong>Incidents :</strong> Vous pouvez consulter uniquement les tickets QHSE qui vous ont été assignés. Vous ne pouvez pas déclarer d'incidents (sécurité, entretien, biomédical).
+              <strong>Incidents :</strong> Vous pouvez consulter les tickets QHSE qui vous ont été assignés ainsi que vos propres déclarations d'incidents et d'équipements.
             </p>
             <p>
               <strong>Maintenances :</strong> Consultez l'historique des maintenances et suivez les interventions planifiées.
