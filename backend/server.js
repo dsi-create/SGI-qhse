@@ -19,7 +19,9 @@ const {
   validateVisitor,
   rateLimitLogin,
   requestLogger,
-  loginAttempts
+  loginAttempts,
+  resetLoginAttempts,
+  resetAllLoginAttempts
 } = require('./middlewares/validation');
 
 const app = express();
@@ -398,6 +400,24 @@ app.post('/api/auth/signin', rateLimitLogin, validateSignin, async (req, res) =>
     });
   } catch (error) {
     console.error('Erreur lors de la connexion:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// Endpoint pour réinitialiser le compteur de tentatives (utile en développement)
+app.post('/api/auth/reset-login-attempts', (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (email) {
+      resetLoginAttempts(email);
+      res.json({ message: `Compteur réinitialisé pour ${email}` });
+    } else {
+      resetAllLoginAttempts();
+      res.json({ message: 'Tous les compteurs ont été réinitialisés' });
+    }
+  } catch (error) {
+    console.error('Erreur lors de la réinitialisation:', error);
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
