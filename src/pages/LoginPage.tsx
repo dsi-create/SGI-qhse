@@ -30,42 +30,77 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
   };
 
   return (
-    <div className="app-shell bg-white">
-      <div className="relative flex flex-1 flex-col overflow-hidden lg:flex-row">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.45]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, hsl(191 91% 37% / 0.09) 1px, transparent 0)",
-            backgroundSize: "24px 24px",
-          }}
-        />
-        <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-cyan-100/70 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full bg-teal-100/60 blur-3xl" />
+    <div className="app-shell bg-gradient-to-br from-slate-100 via-cyan-50/40 to-teal-50/30">
+      <div className="relative flex flex-1 flex-col lg:flex-row">
+        {/* Brand panel — soft teal-cyan, not navy */}
+        <aside className="relative hidden overflow-hidden bg-gradient-to-br from-cyan-600 via-cyan-700 to-teal-700 lg:flex lg:w-[44%] lg:flex-col lg:justify-between lg:px-12 lg:py-14 xl:px-14">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-30"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.18) 1px, transparent 0)",
+              backgroundSize: "26px 26px",
+            }}
+          />
+          <div className="pointer-events-none absolute -right-16 top-24 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-8 left-8 h-48 w-48 rounded-full bg-teal-400/20 blur-3xl" />
 
-        {/* Text + form */}
-        <main className="relative z-10 flex flex-1 flex-col justify-center px-4 py-12 sm:px-10 lg:w-[52%] lg:px-14 xl:px-20">
-          <div className="mx-auto w-full max-w-md">
-            <div className="mb-8">
-              <div className="mb-6 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 ring-1 ring-cyan-100">
-                  <img src={LOGO_URL} alt="Logo CDL" className="h-8 w-8 object-contain" />
-                </div>
-                <span className="text-xl font-bold tracking-tight text-cyan-600">cdl</span>
+          <div className="relative flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/25">
+              <img src={LOGO_URL} alt="Logo CDL" className="h-8 w-8 object-contain" />
+            </div>
+            <span className="text-lg font-bold tracking-tight text-white">cdl</span>
+          </div>
+
+          <div className="relative max-w-md space-y-4">
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-cyan-100">
+              Système de Gestion Intégré
+            </p>
+            <h1 className="text-3xl font-bold leading-tight tracking-tight text-white xl:text-4xl">
+              Pilotez la qualité et les opérations en un seul endroit
+            </h1>
+            <p className="text-base leading-relaxed text-cyan-50/90">
+              Accédez à vos modules QHSE, maintenance, planning et biomédical
+              dans une interface moderne pour les équipes hospitalières.
+            </p>
+          </div>
+
+          <div className="relative grid grid-cols-3 gap-3">
+            {[
+              { label: "Qualité", value: "QHSE" },
+              { label: "Sécurité", value: "Ops" },
+              { label: "Patients", value: "Care" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-2xl border border-white/20 bg-white/10 px-3 py-3.5 text-center backdrop-blur-sm"
+              >
+                <p className="text-base font-bold text-white">{item.value}</p>
+                <p className="mt-0.5 text-[11px] text-cyan-100/80">{item.label}</p>
               </div>
-              <p className="mb-2 text-sm font-semibold text-cyan-600">
-                Système de Gestion Intégré
+            ))}
+          </div>
+        </aside>
+
+        {/* Form — soft gray-white card on muted background */}
+        <main className="relative flex flex-1 flex-col justify-center px-4 py-10 sm:px-8 lg:px-12 xl:px-16">
+          <div className="mx-auto w-full max-w-md">
+            <div className="mb-7 flex flex-col items-center text-center lg:items-start lg:text-left">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80 lg:hidden">
+                <img src={LOGO_URL} alt="Logo CDL" className="h-9 w-9 object-contain" />
+              </div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-700">
+                Connexion sécurisée
               </p>
-              <h1 className="text-3xl font-bold leading-tight tracking-tight text-[hsl(var(--brand-navy))] sm:text-4xl">
-                Bienvenue sur votre espace collaborateur
-              </h1>
-              <p className="mt-3 text-base leading-relaxed text-slate-500">
-                Connectez-vous pour piloter la qualité, la sécurité et les opérations
-                du Centre Diagnostic Libreville.
+              <h2 className="text-3xl font-bold tracking-tight text-slate-800">
+                Bienvenue
+              </h2>
+              <p className="mt-2 text-sm text-slate-500 lg:text-[15px]">
+                Connectez-vous pour accéder à votre espace Centre Diagnostic Libreville.
               </p>
             </div>
 
-            <Card className="border-slate-200/90 bg-white shadow-soft">
+            <Card className="border-slate-200/90 bg-white/95 shadow-md">
               <CardContent className="p-6 sm:p-7">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-2">
@@ -75,7 +110,7 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="h-11 rounded-xl border-slate-200 bg-slate-50/50 transition-all focus-visible:bg-white focus-visible:ring-cyan-500"
+                      className="h-11 rounded-xl border-slate-200 bg-slate-50 transition-all focus-visible:bg-white focus-visible:ring-cyan-500"
                       placeholder="votre@email.com"
                     />
                   </div>
@@ -86,7 +121,7 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="h-11 rounded-xl border-slate-200 bg-slate-50/50 pr-10 transition-all focus-visible:bg-white focus-visible:ring-cyan-500"
+                      className="h-11 rounded-xl border-slate-200 bg-slate-50 pr-10 transition-all focus-visible:bg-white focus-visible:ring-cyan-500"
                       placeholder="••••••••"
                     />
                     <Button
@@ -124,43 +159,6 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
             </Card>
           </div>
         </main>
-
-        {/* Light visual panel */}
-        <aside className="relative z-10 hidden items-center justify-center lg:flex lg:w-[48%] lg:px-10 lg:py-14">
-          <div className="relative w-full max-w-lg">
-            <div className="absolute -left-6 top-8 h-28 w-28 rounded-full bg-cyan-200/50 blur-2xl" />
-            <div className="absolute -right-4 bottom-16 h-36 w-36 rounded-full bg-teal-200/50 blur-2xl" />
-            <div className="absolute right-10 top-0 h-20 w-20 rounded-[2rem] bg-blue-100/80" />
-
-            <div className="relative space-y-4 rounded-[2rem] border border-slate-200/80 bg-white/90 p-8 shadow-card backdrop-blur-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-600">
-                Plateforme CDL
-              </p>
-              <h2 className="text-2xl font-bold tracking-tight text-[hsl(var(--brand-navy))]">
-                Tout votre SGI, clairement organisé
-              </h2>
-              <p className="text-sm leading-relaxed text-slate-500">
-                QHSE, sécurité, entretien, planning et biomédical dans une interface claire,
-                lumineuse et pensée pour le quotidien des équipes.
-              </p>
-              <div className="grid grid-cols-3 gap-3 pt-2">
-                {[
-                  { label: "Qualité", value: "QHSE", color: "from-cyan-50 to-cyan-100/80 text-cyan-700" },
-                  { label: "Sécurité", value: "Ops", color: "from-blue-50 to-blue-100/80 text-blue-700" },
-                  { label: "Patients", value: "Care", color: "from-teal-50 to-teal-100/80 text-teal-700" },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className={`rounded-2xl bg-gradient-to-br ${item.color} px-3 py-4 text-center`}
-                  >
-                    <p className="text-base font-bold">{item.value}</p>
-                    <p className="mt-1 text-[11px] opacity-80">{item.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </aside>
       </div>
 
       <AppFooter />
