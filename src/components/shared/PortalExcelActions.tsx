@@ -304,7 +304,7 @@ export const PortalExcelActions = ({ portalType, data, onExport, onImport }: Por
       <Button
         onClick={handleExportExcel}
         variant="outline"
-        className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm"
+        className="border-cyan-200 bg-white text-cyan-700 hover:bg-cyan-50"
         size="sm"
       >
         <Icon name="FileText" className="mr-2 h-4 w-4" />

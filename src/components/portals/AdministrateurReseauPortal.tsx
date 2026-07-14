@@ -9,6 +9,7 @@ import { fr } from "date-fns/locale";
 import { generatePortalReportPDF } from "@/utils/portalReportsGenerator";
 import { showSuccess, showError } from "@/utils/toast";
 import { PortalExcelActions } from "@/components/shared/PortalExcelActions";
+import { PortalHero } from "@/components/layout/PortalHero";
 import { roleConfig } from "@/lib/data";
 
 interface PortalProps {
@@ -89,25 +90,18 @@ export const AdministrateurReseauPortal = ({
 
   return (
     <div className="space-y-8 fade-in">
-      {/* En-tête personnalisé */}
-      <div className="bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 text-white p-8 rounded-xl shadow-2xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center mb-3">
-              <Icon name="Network" className="text-4xl mr-3" />
-              <h1 className="text-4xl font-bold">Portail Administrateur Réseau</h1>
-            </div>
-            <p className="text-cyan-100 text-xl">
-              {user.civility} {user.first_name} {user.last_name}
-            </p>
-            <p className="text-cyan-200 mt-2">
-              Gestion du matériel réseau, abonnements, inventaire et interventions
-            </p>
-            <p className="text-cyan-200 mt-1">
-              {format(today, "EEEE d MMMM yyyy", { locale: fr })} - {format(today, "HH:mm")}
-            </p>
-          </div>
-          <div className="flex gap-2">
+      <PortalHero
+        icon="Network"
+        title="Portail Administrateur Réseau"
+        subtitle={`${user.civility} ${user.first_name} ${user.last_name}`}
+        description={
+          <>
+            <span>Gestion du matériel réseau, abonnements, inventaire et interventions</span>
+            <span className="mt-1 block">{`${format(today, "EEEE d MMMM yyyy", { locale: fr })} - ${format(today, "HH:mm")}`}</span>
+          </>
+        }
+        actions={
+          <>
             <PortalExcelActions
               portalType="administrateur_reseau"
               data={{
@@ -120,15 +114,15 @@ export const AdministrateurReseauPortal = ({
               variant="outline"
               onClick={handleGenerateReport}
               disabled={isGeneratingReport}
-              className="bg-white/10 hover:bg-white/20 border-white/30 text-white"
+              className="border-cyan-200 bg-white text-cyan-700 hover:bg-cyan-50"
               size="sm"
             >
               <Icon name={isGeneratingReport ? "Clock" : "Download"} className={`mr-2 h-4 w-4 ${isGeneratingReport ? 'animate-spin' : ''}`} />
               {isGeneratingReport ? 'Génération...' : 'Exporter PDF'}
             </Button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Statistiques */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

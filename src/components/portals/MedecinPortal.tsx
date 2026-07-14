@@ -8,8 +8,10 @@ import { User, Booking, Notification, Incident } from "@/types";
 import { format, isToday, isTomorrow, startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
 import { fr } from "date-fns/locale";
 import { generatePortalReportPDF } from "@/utils/portalReportsGenerator";
+import { generateDoctorSchedulePDF } from "@/utils/doctorSchedulePdfGenerator";
 import { showSuccess, showError } from "@/utils/toast";
 import { PortalExcelActions } from "@/components/shared/PortalExcelActions";
+import { PortalHero } from "@/components/layout/PortalHero";
 
 interface PortalProps {
   user: User;
@@ -22,6 +24,7 @@ interface PortalProps {
 // Portail Médecin
 export const MedecinPortal = ({ user, bookings, notifications, incidents, onNavigate }: PortalProps) => {
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [isExportingSchedule, setIsExportingSchedule] = useState(false);
   const today = new Date();
   const todayStr = today.toDateString();
   
@@ -69,52 +72,66 @@ export const MedecinPortal = ({ user, bookings, notifications, incidents, onNavi
     }
   };
 
+  const handleExportDoctorSchedule = async () => {
+    setIsExportingSchedule(true);
+    try {
+      await generateDoctorSchedulePDF();
+      showSuccess('Planning des salles exporté en PDF.');
+    } catch (error) {
+      console.error('Erreur export planning:', error);
+      showError("Erreur lors de l'export du planning des salles.");
+    } finally {
+      setIsExportingSchedule(false);
+    }
+  };
+
   return (
     <div className="space-y-8 fade-in">
-      {/* En-tête personnalisé */}
-      <div className="bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 text-white p-8 rounded-xl shadow-2xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center mb-3">
-              <Icon name="Stethoscope" className="text-4xl mr-3" />
-              <h1 className="text-4xl font-bold">Portail Médecin</h1>
-            </div>
-            <p className="text-cyan-100 text-xl">
-              {doctorDisplayName}
-            </p>
-            <p className="text-cyan-200 mt-2">
-              {format(today, "EEEE d MMMM yyyy", { locale: fr })} - {format(today, "HH:mm")}
-            </p>
+      <PortalHero
+        icon="Stethoscope"
+        title="Portail Médecin"
+        subtitle={doctorDisplayName}
+        description={`${format(today, "EEEE d MMMM yyyy", { locale: fr })} - ${format(today, "HH:mm")}`}
+        actions={
+          <>
+            <PortalExcelActions
+              portalType="medecin"
+              data={{
+                bookings: myBookings,
+                incidents,
+              }}
+            />
+            <Button
+              onClick={handleExportDoctorSchedule}
+              disabled={isExportingSchedule}
+              variant="outline"
+              className="border-cyan-200 bg-white text-cyan-700 hover:bg-cyan-50"
+              size="sm"
+            >
+              <Icon name={isExportingSchedule ? "Clock" : "Calendar"} className={`mr-2 h-4 w-4 ${isExportingSchedule ? 'animate-spin' : ''}`} />
+              {isExportingSchedule ? 'Export...' : 'Planning salles PDF'}
+            </Button>
+            <Button
+              onClick={handleGenerateReport}
+              disabled={isGeneratingReport}
+              variant="outline"
+              className="border-cyan-200 bg-white text-cyan-700 hover:bg-cyan-50"
+              size="sm"
+            >
+              <Icon name={isGeneratingReport ? "Clock" : "Download"} className={`mr-2 h-4 w-4 ${isGeneratingReport ? 'animate-spin' : ''}`} />
+              {isGeneratingReport ? 'Génération...' : 'Mon rapport PDF'}
+            </Button>
+          </>
+        }
+      >
+        {unreadNotifications.length > 0 && (
+          <div className="mt-4 inline-flex flex-col items-center rounded-lg border border-cyan-100 bg-cyan-50 px-4 py-3 text-center">
+            <Icon name="Bell" className="mb-1 h-5 w-5 text-cyan-600" />
+            <div className="text-2xl font-bold text-[hsl(var(--brand-navy))]">{unreadNotifications.length}</div>
+            <div className="text-xs text-slate-500">Notification{unreadNotifications.length > 1 ? 's' : ''}</div>
           </div>
-          <div className="flex items-center gap-3">
-            {unreadNotifications.length > 0 && (
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center">
-                <Icon name="Bell" className="text-3xl mb-2 mx-auto" />
-                <div className="text-3xl font-bold">{unreadNotifications.length}</div>
-                <div className="text-sm text-cyan-100">Notification{unreadNotifications.length > 1 ? 's' : ''}</div>
-              </div>
-            )}
-            <div className="flex gap-2">
-              <PortalExcelActions
-                portalType="medecin"
-                data={{
-                  bookings: myBookings,
-                  incidents,
-                }}
-              />
-              <Button
-                onClick={handleGenerateReport}
-                disabled={isGeneratingReport}
-                className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm"
-                size="sm"
-              >
-                <Icon name={isGeneratingReport ? "Clock" : "Download"} className={`mr-2 h-4 w-4 ${isGeneratingReport ? 'animate-spin' : ''}`} />
-                {isGeneratingReport ? 'Génération...' : 'Exporter PDF'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+        )}
+      </PortalHero>
 
       {/* Statistiques */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

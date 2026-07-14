@@ -10,6 +10,7 @@ import { PortalExcelActions } from "@/components/shared/PortalExcelActions";
 import { generatePortalReportPDF } from "@/utils/portalReportsGenerator";
 import { showSuccess, showError } from "@/utils/toast";
 import { Button } from "@/components/ui/button";
+import { PortalHero } from "@/components/layout/PortalHero";
 
 interface PortalProps {
   user: User;
@@ -57,48 +58,44 @@ export const UserPortal = ({ user, incidents, visitors, plannedTasks, bookings, 
 
   return (
     <div className="space-y-8 fade-in">
-      {/* En-tête du portail */}
-      <div className="bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 text-white p-6 rounded-xl shadow-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">
-              Bienvenue, {user.civility} {user.first_name} {user.last_name}
-            </h1>
-            <p className="text-cyan-100 text-lg">
-              {format(today, "EEEE d MMMM yyyy", { locale: fr })} - Centre Diagnostic Libreville
-            </p>
-          </div>
-          <div className="flex flex-col items-end gap-3">
-            <div className="text-right">
-              <div className="text-4xl font-bold">{format(today, "HH:mm")}</div>
-              <div className="text-cyan-100">{unreadNotifications > 0 && `${unreadNotifications} notification(s)`}</div>
-            </div>
-            <div className="flex gap-2">
-              <PortalExcelActions
-                portalType="user"
-                data={{
-                  incidents,
-                  visitors,
-                  plannedTasks,
-                  bookings,
-                }}
+      <PortalHero
+        icon="User"
+        title={`Bienvenue, ${user.civility} ${user.first_name} ${user.last_name}`}
+        subtitle={`${format(today, "EEEE d MMMM yyyy", { locale: fr })} - Centre Diagnostic Libreville`}
+        actions={
+          <>
+            <PortalExcelActions
+              portalType="user"
+              data={{
+                incidents,
+                visitors,
+                plannedTasks,
+                bookings,
+              }}
+            />
+            <Button
+              onClick={handleGenerateReport}
+              disabled={isGeneratingReport}
+              size="sm"
+              variant="outline"
+              className="border-cyan-200 bg-white text-cyan-700 hover:bg-cyan-50"
+            >
+              <Icon
+                name={isGeneratingReport ? "Clock" : "Download"}
+                className={`mr-2 h-4 w-4 ${isGeneratingReport ? "animate-spin" : ""}`}
               />
-              <Button
-                onClick={handleGenerateReport}
-                disabled={isGeneratingReport}
-                size="sm"
-                className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm"
-              >
-                <Icon
-                  name={isGeneratingReport ? "Clock" : "Download"}
-                  className={`mr-2 h-4 w-4 ${isGeneratingReport ? "animate-spin" : ""}`}
-                />
-                {isGeneratingReport ? "Génération..." : "Rapport PDF"}
-              </Button>
-            </div>
-          </div>
+              {isGeneratingReport ? "Génération..." : "Rapport PDF"}
+            </Button>
+          </>
+        }
+      >
+        <div className="mt-4">
+          <div className="text-3xl font-bold text-[hsl(var(--brand-navy))]">{format(today, "HH:mm")}</div>
+          {unreadNotifications > 0 && (
+            <div className="text-sm text-slate-500">{unreadNotifications} notification(s)</div>
+          )}
         </div>
-      </div>
+      </PortalHero>
 
       {/* Statistiques rapides */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

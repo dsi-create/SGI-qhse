@@ -7,6 +7,7 @@ import { Incident, Users, IncidentPriority, IncidentStatus, User } from '@/types
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { TicketComments } from '@/components/qhse/TicketComments';
+import { AppFooter } from '@/components/layout/AppFooter';
 
 interface IncidentDetailsPageProps {
   incidents: Incident[];
@@ -35,11 +36,11 @@ const IncidentDetailsPage = ({ incidents, users, currentUser }: IncidentDetailsP
 
   if (!incident) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center bg-slate-50 px-6">
-        <Icon name="AlertTriangle" className="w-16 h-16 text-red-500 mb-4" />
-        <h1 className="text-3xl font-bold mb-2 text-gray-800">Incident introuvable</h1>
-        <p className="text-gray-500 mb-6">La fiche demandée n'existe plus ou vous n'y avez pas accès.</p>
-        <Link to="/" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-600 text-white hover:bg-cyan-700 transition-colors">
+      <div className="app-shell items-center justify-center px-6 text-center">
+        <Icon name="AlertTriangle" className="mb-4 h-16 w-16 text-red-500" />
+        <h1 className="mb-2 text-3xl font-bold text-[hsl(var(--brand-navy))]">Incident introuvable</h1>
+        <p className="mb-6 text-slate-500">La fiche demandée n'existe plus ou vous n'y avez pas accès.</p>
+        <Link to="/" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 px-4 py-2.5 font-semibold text-white shadow-md shadow-cyan-600/20">
           <Icon name="Home" className="h-4 w-4" />
           Retour au tableau de bord
         </Link>
@@ -72,19 +73,16 @@ const IncidentDetailsPage = ({ incidents, users, currentUser }: IncidentDetailsP
     return entry.name || entry.username;
   }, [incident.reported_by, users]);
 
-  const headerGradient = "from-cyan-600 via-blue-600 to-teal-600";
-
   return (
-    <div className="bg-slate-50 min-h-screen">
-      <div className={`relative pb-4 md:pb-6 bg-gradient-to-r ${headerGradient}`}>
-        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-        <div className="relative px-6 pt-5 pb-3 md:px-10 lg:px-16 flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors">
+    <div className="app-shell">
+      <header className="border-b border-slate-200/80 bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-6 md:px-10 lg:px-16">
+          <div className="flex items-center justify-between gap-3">
+            <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800">
               <Icon name="ChevronLeft" className="h-4 w-4" />
               Retour
             </Link>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Badge className={`${priorityClasses[incident.priorite]} text-white`}>
                 Priorité : {incident.priorite}
               </Badge>
@@ -94,42 +92,42 @@ const IncidentDetailsPage = ({ incidents, users, currentUser }: IncidentDetailsP
             </div>
           </div>
           <div>
-            <div className="text-sm uppercase tracking-widest text-white/70 mb-2">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-600">
               Ticket #{incident.id.substring(0, 12)}
-            </div>
-            <h1 className="text-4xl font-bold text-white mb-3">
+            </p>
+            <h1 className="mb-3 text-3xl font-bold tracking-tight text-[hsl(var(--brand-navy))] md:text-4xl">
               {incident.type.replace(/-/g, ' ').toUpperCase()}
             </h1>
-            <div className="flex flex-wrap items-center gap-4 text-white/80">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
               <span className="inline-flex items-center gap-2">
-                <Icon name="Calendar" className="h-4 w-4" />
+                <Icon name="Calendar" className="h-4 w-4 text-cyan-600" />
                 {format(incident.date_creation, "EEEE d MMMM yyyy 'à' HH:mm", { locale: fr })}
               </span>
               <span className="inline-flex items-center gap-2">
-                <Icon name="MapPin" className="h-4 w-4" />
+                <Icon name="MapPin" className="h-4 w-4 text-cyan-600" />
                 {incident.lieu}
               </span>
               <span className="inline-flex items-center gap-2">
-                <Icon name="User" className="h-4 w-4" />
+                <Icon name="User" className="h-4 w-4 text-cyan-600" />
                 {reportedByUserName}
               </span>
               {incident.assigned_to && (
                 <span className="inline-flex items-center gap-2">
-                  <Icon name="UserCheck" className="h-4 w-4" />
+                  <Icon name="User" className="h-4 w-4 text-cyan-600" />
                   Assigné à : {assignedUserName}
                 </span>
               )}
               <span className="inline-flex items-center gap-2">
-                <Icon name="Layer" className="h-4 w-4" />
+                <Icon name="LayoutGrid" className="h-4 w-4 text-cyan-600" />
                 Service : {incident.service}
               </span>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="px-6 md:px-10 lg:px-16 -mt-4 md:-mt-6 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-8">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-6 py-8 md:px-10 lg:px-16">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[2fr,1fr]">
           <div className="space-y-6">
             <Card className="border-none shadow-lg">
               <CardHeader className="pb-3">
@@ -360,6 +358,7 @@ const IncidentDetailsPage = ({ incidents, users, currentUser }: IncidentDetailsP
           </div>
         </div>
       </div>
+      <AppFooter />
     </div>
   );
 };

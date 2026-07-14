@@ -11,10 +11,11 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RoomScheduleMatrix } from './RoomScheduleMatrix';
 import { BookingDetailsDialog } from './BookingDetailsDialog';
 import { generateBookingReportPDF } from '@/utils/bookingPdfGenerator';
+import { generateDoctorSchedulePDF } from '@/utils/doctorSchedulePdfGenerator';
 import { showError, showSuccess } from '@/utils/toast';
 import { EditBookingDialog } from './EditBookingDialog';
 import { cn } from '@/lib/utils';
-import { canManageBookings } from '@/lib/permissions';
+import { canManageBookings, canViewBookings } from '@/lib/permissions';
 import { ConsultationAvailability } from './ConsultationAvailability';
 import availabilityGrid from '@/data/consultationSchedule.json';
 import { RoomScheduleCalendar } from './RoomScheduleCalendar';
@@ -118,6 +119,7 @@ export const RoomSchedule = ({ rooms, bookings, users, doctors, onAddBooking, up
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [bookingToEdit, setBookingToEdit] = useState<Booking | null>(null);
   const [showReference, setShowReference] = useState(false);
+  const [isExportingDoctorSchedule, setIsExportingDoctorSchedule] = useState(false);
   const [selectedDay, setSelectedDay] = useState<string>(() => {
     const dayName = format(new Date(), 'EEEE', { locale: fr });
     const normalized = normalizeDay(dayName);
@@ -221,8 +223,24 @@ export const RoomSchedule = ({ rooms, bookings, users, doctors, onAddBooking, up
   };
 
   const handleGenerateReport = async () => {
-    await generateBookingReportPDF(dailyBookings, roomsToDisplay, users, selectedDate);
-    showSuccess("Le rapport PDF a été généré avec succès.");
+    try {
+      await generateBookingReportPDF(dailyBookings, roomsToDisplay, users, selectedDate);
+      showSuccess("Le rapport PDF a été généré avec succès.");
+    } catch {
+      showError("Erreur lors de la génération du rapport PDF.");
+    }
+  };
+
+  const handleExportDoctorSchedule = async () => {
+    setIsExportingDoctorSchedule(true);
+    try {
+      await generateDoctorSchedulePDF();
+      showSuccess("Le planning des médecins a été exporté en PDF.");
+    } catch {
+      showError("Erreur lors de l'export du planning médecins.");
+    } finally {
+      setIsExportingDoctorSchedule(false);
+    }
   };
 
   const getBookingsForRoomAndDate = (roomId: string, date: Date) => {
@@ -282,10 +300,20 @@ export const RoomSchedule = ({ rooms, bookings, users, doctors, onAddBooking, up
               <Icon name="List" className="h-4 w-4" />
             </ToggleGroupItem>
           </ToggleGroup>
+          {canViewBookings(currentUserRole) && (
+            <Button
+              variant="outline"
+              onClick={handleExportDoctorSchedule}
+              disabled={isExportingDoctorSchedule}
+            >
+              <Icon name={isExportingDoctorSchedule ? "Clock" : "FileDown"} className={`mr-2 h-4 w-4 ${isExportingDoctorSchedule ? 'animate-spin' : ''}`} />
+              {isExportingDoctorSchedule ? 'Export...' : 'Planning médecins PDF'}
+            </Button>
+          )}
           {canManageBookings(currentUserRole) && (
             <>
               <Button variant="outline" onClick={handleGenerateReport}>
-                <Icon name="Download" className="mr-2 h-4 w-4" /> Rapport
+                <Icon name="Download" className="mr-2 h-4 w-4" /> Rapport jour
               </Button>
               <Button
                 onClick={() => { setNewBookingInfo(undefined); setIsAddDialogOpen(true); }}

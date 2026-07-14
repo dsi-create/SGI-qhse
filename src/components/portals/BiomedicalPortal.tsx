@@ -10,6 +10,7 @@ import { fr } from "date-fns/locale";
 import { generatePortalReportPDF } from "../../utils/portalReportsGenerator";
 import { showSuccess, showError } from "../../utils/toast";
 import { PortalExcelActions } from "../shared/PortalExcelActions";
+import { PortalHero } from "@/components/layout/PortalHero";
 
 interface BiomedicalPortalProps {
   user: User;
@@ -101,48 +102,40 @@ export const BiomedicalPortal = ({ user, biomedicalEquipment, maintenanceTasks, 
 
   return (
     <div className="space-y-8 fade-in">
-      <div className="bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 text-white p-8 rounded-xl shadow-2xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center mb-3">
-              <Icon name="HeartPulse" className="text-4xl mr-3" />
-              <h1 className="text-4xl font-bold">Portail Biomédical</h1>
-            </div>
-            <p className="text-cyan-100 text-xl">
-              {user.civility} {ownerLabel} - Gestion des équipements biomédicaux
-            </p>
-            <p className="text-cyan-200 mt-2">
-              {format(today, "EEEE d MMMM yyyy", { locale: fr })} - {format(today, "HH:mm", { locale: fr })}
-            </p>
-          </div>
-          <div className="flex flex-col items-end gap-3">
-            <div className="hidden md:block text-right">
-              <p className="text-cyan-100 text-sm uppercase tracking-wide">Suivi global</p>
-              <p className="text-3xl font-bold">{stats.operational}/{stats.total}</p>
-              <p className="text-cyan-200 text-sm">équipements opérationnels</p>
-            </div>
-            <div className="flex gap-2">
-              <PortalExcelActions
-                portalType="biomedical"
-                data={{
-                  biomedicalEquipment,
-                  maintenanceTasks,
-                  incidents: biomedicalIncidents,
-                }}
-              />
-              <Button
-                onClick={handleGenerateReport}
-                disabled={isGeneratingReport}
-                className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm"
-                size="sm"
-              >
-                <Icon name={isGeneratingReport ? "Clock" : "Download"} className={`mr-2 h-4 w-4 ${isGeneratingReport ? 'animate-spin' : ''}`} />
-                {isGeneratingReport ? 'Génération...' : 'Exporter PDF'}
-              </Button>
-            </div>
-          </div>
+      <PortalHero
+        icon="HeartPulse"
+        title="Portail Biomédical"
+        subtitle={`${user.civility} ${ownerLabel} - Gestion des équipements biomédicaux`}
+        description={`${format(today, "EEEE d MMMM yyyy", { locale: fr })} - ${format(today, "HH:mm", { locale: fr })}`}
+        actions={
+          <>
+            <PortalExcelActions
+              portalType="biomedical"
+              data={{
+                biomedicalEquipment,
+                maintenanceTasks,
+                incidents: biomedicalIncidents,
+              }}
+            />
+            <Button
+              onClick={handleGenerateReport}
+              disabled={isGeneratingReport}
+              variant="outline"
+              className="border-cyan-200 bg-white text-cyan-700 hover:bg-cyan-50"
+              size="sm"
+            >
+              <Icon name={isGeneratingReport ? "Clock" : "Download"} className={`mr-2 h-4 w-4 ${isGeneratingReport ? 'animate-spin' : ''}`} />
+              {isGeneratingReport ? 'Génération...' : 'Exporter PDF'}
+            </Button>
+          </>
+        }
+      >
+        <div className="mt-4 hidden md:block">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Suivi global</p>
+          <p className="text-2xl font-bold text-[hsl(var(--brand-navy))]">{stats.operational}/{stats.total}</p>
+          <p className="text-sm text-slate-500">équipements opérationnels</p>
         </div>
-      </div>
+      </PortalHero>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <DashboardCard

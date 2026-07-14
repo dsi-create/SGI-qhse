@@ -1,7 +1,11 @@
+import { useState } from "react";
 import availabilityGrid from "@/data/consultationSchedule.json";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/Icon";
 import { cn } from "@/lib/utils";
+import { generateDoctorSchedulePDF } from "@/utils/doctorSchedulePdfGenerator";
+import { showError, showSuccess } from "@/utils/toast";
 
 interface AvailabilitySlot {
   start: string;
@@ -31,7 +35,20 @@ interface ConsultationAvailabilityProps {
 }
 
 export const ConsultationAvailability = ({ selectedDay, onSelectDay }: ConsultationAvailabilityProps) => {
+  const [isExporting, setIsExporting] = useState(false);
   const normalizedSelected = selectedDay ? normalizeDay(selectedDay) : null;
+
+  const handleExportPdf = async () => {
+    setIsExporting(true);
+    try {
+      await generateDoctorSchedulePDF(selectedDay);
+      showSuccess("Planning exporté en PDF.");
+    } catch {
+      showError("Erreur lors de l'export PDF.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const daysToDisplay = normalizedSelected
     ? typedAvailability.filter((dayBlock) => normalizeDay(dayBlock.day) === normalizedSelected)
@@ -44,7 +61,17 @@ export const ConsultationAvailability = ({ selectedDay, onSelectDay }: Consultat
           <Icon name="CalendarDays" className="text-cyan-600" />
           Grille de disponibilité des consultations
         </CardTitle>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportPdf}
+            disabled={isExporting}
+            className="mr-2"
+          >
+            <Icon name={isExporting ? "Clock" : "FileDown"} className={`mr-2 h-4 w-4 ${isExporting ? 'animate-spin' : ''}`} />
+            {isExporting ? 'Export...' : 'Exporter PDF'}
+          </Button>
           {typedAvailability.map((dayBlock) => {
             const isActive = normalizeDay(dayBlock.day) === normalizedSelected;
             return (

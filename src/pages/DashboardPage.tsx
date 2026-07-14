@@ -61,6 +61,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { showSuccess, showError } from '@/utils/toast';
 import { IncidentType, IncidentService } from '@/types';
+import { AppFooter } from '@/components/layout/AppFooter';
 
 // Props de la page principale
 interface DashboardPageProps {
@@ -521,21 +522,10 @@ const DashboardPage = (props: DashboardPageProps) => {
           setActiveTab(tab.id);
           if (isMobile) setIsMobileNavOpen(false);
         }}
-        className={`
-          relative px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ease-in-out
-          ${resolvedActiveTab === tab.id 
-            ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 text-white shadow-lg transform scale-105' 
-            : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-          }
-          hover:scale-105 active:scale-95
-          flex items-center space-x-2
-        `}
+        className={`nav-link ${resolvedActiveTab === tab.id ? 'nav-link-active' : ''}`}
       >
         <Icon name={tab.icon} className="h-4 w-4" />
         <span>{tab.name}</span>
-        {resolvedActiveTab === tab.id && (
-          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/50 rounded-full"></span>
-        )}
       </button>
     ));
   };
@@ -930,47 +920,57 @@ const DashboardPage = (props: DashboardPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50/20 to-blue-50/30">
-      <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200/50 sticky top-0 z-50">
-        <div className="px-4 md:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3 md:space-x-4">
+    <div className="app-shell">
+      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-4 py-3.5 md:px-6">
+          <div className="flex min-w-0 items-center gap-3 md:gap-4">
             {isMobile && (
               <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="btn-animate">
-                    <Icon name="Menu" className="h-6 w-6" />
+                  <Button variant="ghost" size="icon" className="shrink-0">
+                    <Icon name="Menu" className="h-5 w-5 text-slate-700" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-                  <nav className="flex flex-col pt-6">
+                <SheetContent side="left" className="w-72 border-r border-slate-200 bg-white p-0">
+                  <div className="border-b border-slate-100 px-5 py-5">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-600">Menu</p>
+                    <p className="mt-1 font-bold text-[hsl(var(--brand-navy))]">Navigation</p>
+                  </div>
+                  <nav className="flex flex-col gap-1 p-3">
                     <NavLinks />
                   </nav>
                 </SheetContent>
               </Sheet>
             )}
-            <div className="flex items-center space-x-3">
-              <img src="https://page1.genspark.site/v1/base64_upload/85255e9e3f43d5940a170bdbd6d7b858" alt="Logo CDL" className="h-10 w-10 md:h-12 md:w-12 rounded-lg shadow-md" />
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-50 to-teal-50 ring-1 ring-cyan-100 md:h-12 md:w-12">
+                <img
+                  src="https://page1.genspark.site/v1/base64_upload/85255e9e3f43d5940a170bdbd6d7b858"
+                  alt="Logo CDL"
+                  className="h-8 w-8 object-contain md:h-9 md:w-9"
+                />
+              </div>
               {!isMobile && (
-                <div>
-                  <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 bg-clip-text text-transparent">
+                <div className="min-w-0">
+                  <h1 className="truncate text-lg font-bold tracking-tight text-[hsl(var(--brand-navy))] md:text-xl">
                     Centre Diagnostic Libreville
                   </h1>
-                  <p className="text-xs md:text-sm text-gray-600 font-medium">
-                    {user.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  <p className="truncate text-xs font-medium text-cyan-700 md:text-sm">
+                    {user.role.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                   </p>
                 </div>
               )}
             </div>
           </div>
-          <div className="flex items-center space-x-2 md:space-x-4">
+          <div className="flex shrink-0 items-center gap-1.5 md:gap-3">
             {userTabs && userTabs.length > 0 && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setActiveTab(homeTabId)}
-                className="hidden md:flex items-center text-gray-600 hover:text-cyan-600 btn-animate"
+                className="hidden text-slate-600 lg:flex"
               >
-                <Icon name="LayoutDashboard" className="mr-2 h-4 w-4" /> Tableau de Bord
+                <Icon name="LayoutDashboard" className="mr-2 h-4 w-4" /> Tableau de bord
               </Button>
             )}
             {resolvedActiveTab !== homeTabId && (
@@ -978,52 +978,53 @@ const DashboardPage = (props: DashboardPageProps) => {
                 variant="outline"
                 size="sm"
                 onClick={() => setActiveTab(homeTabId)}
-                className="hidden md:flex items-center text-gray-600 hover:text-cyan-600 border-cyan-100"
+                className="hidden md:flex"
               >
-                <Icon name="ArrowLeft" className="mr-2 h-4 w-4" /> Retour à mon portail
+                <Icon name="ArrowLeft" className="mr-2 h-4 w-4" /> Mon portail
               </Button>
             )}
-            <NotificationBell 
+            <NotificationBell
               userId={user.id}
-              notifications={notifications} 
+              notifications={notifications}
               onMarkAsRead={markNotificationsAsRead}
               onMarkNotificationAsRead={markNotificationAsRead}
               onDeleteAll={deleteAllNotifications}
               onNotificationClick={(link) => {
-                console.log('Notification clicked, setting active tab to:', link);
                 setActiveTab(link);
               }}
             />
-            <div className="hidden md:flex items-center space-x-2 px-3 py-1.5 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg border border-cyan-100">
-              <Icon name="User" className="h-4 w-4 text-cyan-600" />
-              <span className="text-sm text-gray-700">
-                <span className="font-medium text-gray-900">{user.first_name} {user.last_name}</span>
+            <div className="hidden items-center gap-2 rounded-full border border-cyan-100 bg-cyan-50/80 px-3 py-1.5 md:flex">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 text-[10px] font-bold text-white">
+                {(user.first_name?.[0] || 'U').toUpperCase()}
+              </span>
+              <span className="max-w-[140px] truncate text-sm font-semibold text-slate-800">
+                {user.first_name} {user.last_name}
               </span>
             </div>
-            <Button onClick={onLogout} variant="destructive" className="btn-animate">
+            <Button onClick={onLogout} variant="outline" size="sm" className="border-slate-200 text-slate-700 hover:border-red-200 hover:bg-red-50 hover:text-red-700">
               <Icon name="LogOut" className="md:mr-2 h-4 w-4" />
               <span className="hidden md:inline">Déconnexion</span>
             </Button>
           </div>
         </div>
+
+        {userTabs && userTabs.length > 0 && !isMobile && (
+          <nav className="border-t border-slate-100 bg-white">
+            <div className="mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-4 py-2.5 md:px-6">
+              <NavLinks />
+            </div>
+          </nav>
+        )}
       </header>
 
-      {userTabs && userTabs.length > 0 && (
-        <nav className={`bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white shadow-xl border-b border-gray-700/50 ${isMobile ? 'hidden' : 'block'}`}>
-          <div className="px-6 flex space-x-1 overflow-x-auto">
-            <NavLinks />
-          </div>
-        </nav>
-      )}
-
-      <main className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto fade-in">
+      <main className="mx-auto w-full max-w-[1400px] flex-1 p-4 fade-in md:p-6 lg:p-8">
         {isMobile && resolvedActiveTab !== homeTabId && (
           <div className="mb-4">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setActiveTab(homeTabId)}
-              className="flex items-center gap-2 w-full justify-center bg-white/80 text-gray-700 border-cyan-100"
+              className="flex w-full items-center justify-center gap-2"
             >
               <Icon name="ArrowLeft" className="h-4 w-4" /> Retour à mon portail
             </Button>
@@ -1031,6 +1032,8 @@ const DashboardPage = (props: DashboardPageProps) => {
         )}
         {renderActiveTab()}
       </main>
+
+      <AppFooter />
     </div>
   );
 };
