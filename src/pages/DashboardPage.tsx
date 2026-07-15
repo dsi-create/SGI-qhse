@@ -62,6 +62,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { showSuccess, showError } from '@/utils/toast';
 import { IncidentType, IncidentService } from '@/types';
 import { AppFooter } from '@/components/layout/AppFooter';
+import { InstallPWAButton } from '@/components/shared/InstallPWAButton';
 
 // Props de la page principale
 interface DashboardPageProps {
@@ -1001,6 +1002,12 @@ const DashboardPage = (props: DashboardPageProps) => {
                 {user.first_name} {user.last_name}
               </span>
             </div>
+            <InstallPWAButton
+              variant="outline"
+              size="sm"
+              className="hidden border-cyan-200 text-cyan-800 hover:bg-cyan-50 sm:flex"
+              label="Installer"
+            />
             <Button onClick={onLogout} variant="outline" size="sm" className="border-slate-200 text-slate-700 hover:border-red-200 hover:bg-red-50 hover:text-red-700">
               <Icon name="LogOut" className="md:mr-2 h-4 w-4" />
               <span className="hidden md:inline">Déconnexion</span>

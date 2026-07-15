@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Icon } from '@/components/Icon';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { AppFooter } from '@/components/layout/AppFooter';
+import { InstallPWAButton } from '@/components/shared/InstallPWAButton';
 
 const LOGO_URL =
   "https://page1.genspark.site/v1/base64_upload/85255e9e3f43d5940a170bdbd6d7b858";
@@ -183,6 +184,14 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                     <Icon name="LogIn" className="mr-2 h-5 w-5" /> Se connecter
                   </Button>
                 </form>
+                <div className="mt-4 flex justify-center">
+                  <InstallPWAButton
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-cyan-200 text-cyan-800 hover:bg-cyan-50"
+                    label="Installer l'application"
+                  />
+                </div>
               </CardContent>
             </Card>
 
