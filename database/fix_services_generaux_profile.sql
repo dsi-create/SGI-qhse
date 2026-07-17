@@ -1,9 +1,11 @@
 -- =============================================================================
 -- Lier Auth ↔ profiles pour services.generaux@hospital.com
--- Exécuter dans Supabase SQL Editor
+-- Compatible : profiles.id TEXT, profiles.role TEXT
 -- =============================================================================
 
--- 1) Diagnostic : voir si Auth et profiles sont liés
+ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_role_check;
+
+-- 1) Diagnostic
 SELECT
   u.id AS auth_id,
   u.email AS auth_email,
@@ -12,10 +14,10 @@ SELECT
   p.role,
   p.service
 FROM auth.users u
-LEFT JOIN public.profiles p ON p.id = u.id
+LEFT JOIN public.profiles p ON p.id = u.id::text
 WHERE u.email = 'services.generaux@hospital.com';
 
--- 2) Si profile_id est NULL ou role vide → créer / corriger le profil
+-- 2) Créer / corriger le profil
 INSERT INTO public.profiles (
   id,
   username,
@@ -27,13 +29,13 @@ INSERT INTO public.profiles (
   service
 )
 SELECT
-  u.id,
+  u.id::text,
   'services.generaux',
   u.email,
   'Responsable',
   'Services Généraux',
   'M.',
-  'responsable_services_generaux'::public.user_role_type,
+  'responsable_services_generaux',
   'Services Généraux'
 FROM auth.users u
 WHERE u.email = 'services.generaux@hospital.com'
@@ -46,14 +48,14 @@ ON CONFLICT (id) DO UPDATE SET
   role = EXCLUDED.role,
   service = EXCLUDED.service;
 
--- 3) Supprimer un éventuel doublon (même email mais mauvais id)
+-- 3) Supprimer doublons orphelins
 DELETE FROM public.profiles p
 WHERE p.email = 'services.generaux@hospital.com'
   AND p.id NOT IN (
-    SELECT id FROM auth.users WHERE email = 'services.generaux@hospital.com'
+    SELECT id::text FROM auth.users WHERE email = 'services.generaux@hospital.com'
   );
 
--- 4) Vérification finale
+-- 4) Vérification
 SELECT id, username, email, role, service
 FROM public.profiles
 WHERE email = 'services.generaux@hospital.com';

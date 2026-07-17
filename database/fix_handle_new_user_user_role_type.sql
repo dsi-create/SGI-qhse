@@ -1,7 +1,6 @@
 -- =============================================================================
--- Corriger le trigger Auth -> profiles pour le projet Supabase actuel
--- Exécuter dans Supabase SQL Editor si la fonction create-user retourne :
--- "Database error saving new user" ou une erreur liée à user_role/user_role_type.
+-- Corriger le trigger Auth -> profiles
+-- Compatible avec profiles.id en TEXT et profiles.role en TEXT
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -13,21 +12,11 @@ DECLARE
   role_value TEXT := NULLIF(new.raw_user_meta_data ->> 'role', '');
   civility_value TEXT := NULLIF(new.raw_user_meta_data ->> 'civility', '');
 BEGIN
-  IF role_value IS NULL OR NOT EXISTS (
-    SELECT 1
-    FROM pg_enum
-    WHERE enumtypid = 'public.user_role_type'::regtype
-      AND enumlabel = role_value
-  ) THEN
+  IF role_value IS NULL THEN
     role_value := 'employe';
   END IF;
 
-  IF civility_value IS NULL OR NOT EXISTS (
-    SELECT 1
-    FROM pg_enum
-    WHERE enumtypid = 'public.civility'::regtype
-      AND enumlabel = civility_value
-  ) THEN
+  IF civility_value IS NULL THEN
     civility_value := 'M.';
   END IF;
 
@@ -43,15 +32,15 @@ BEGIN
     role
   )
   VALUES (
-    new.id,
+    new.id::text,
     COALESCE(NULLIF(new.raw_user_meta_data ->> 'first_name', ''), 'Utilisateur'),
     COALESCE(NULLIF(new.raw_user_meta_data ->> 'last_name', ''), 'Nouveau'),
     new.email,
     COALESCE(NULLIF(new.raw_user_meta_data ->> 'service', ''), 'Non renseigné'),
     COALESCE(NULLIF(new.raw_user_meta_data ->> 'username', ''), split_part(new.email, '@', 1)),
-    civility_value::public.civility,
+    civility_value,
     NULLIF(new.raw_user_meta_data ->> 'pin', ''),
-    role_value::public.user_role_type
+    role_value
   )
   ON CONFLICT (id) DO UPDATE SET
     first_name = EXCLUDED.first_name,
