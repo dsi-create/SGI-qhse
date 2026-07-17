@@ -21,13 +21,22 @@ export const CuisinePortal = ({ user, plannedTasks, notifications, incidents, on
   const myIncidents = incidents.filter((i) => i.reported_by === user.id);
   const unread = notifications.filter((n) => !n.read).length;
 
+  const modules = [
+    { id: "cuisineGrocery", title: "Inventaire courses", desc: "Stocks alimentaires et seuils", icon: "PackageSearch", color: "text-amber-600" },
+    { id: "cuisineExpenses", title: "Dépenses", desc: "Suivi des achats cuisine", icon: "CreditCard", color: "text-teal-600" },
+    { id: "cuisinePatientMeals", title: "Repas patients", desc: "Portions et régimes", icon: "HeartPulse", color: "text-rose-600" },
+    { id: "cuisineEmployeeMeals", title: "Repas employés", desc: "Menus et portions servies", icon: "Users", color: "text-cyan-600" },
+    { id: "cuisineMealPlanning", title: "Planning menus", desc: "Organisation hebdomadaire", icon: "CalendarDays", color: "text-indigo-600" },
+    { id: "planningTasks", title: "Planning tâches", desc: "Tâches assignées à l'équipe", icon: "CalendarPlus", color: "text-orange-600" },
+  ];
+
   return (
     <div className="space-y-8 fade-in">
       <PortalHero
         icon="Utensils"
         title="Portail Cuisine"
         subtitle={`${user.civility} ${user.first_name} ${user.last_name}`}
-        description={`${format(today, "EEEE d MMMM yyyy", { locale: fr })} — Espace collaborateur cuisine`}
+        description={`${format(today, "EEEE d MMMM yyyy", { locale: fr })} — Courses, dépenses, repas et planning`}
       />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -52,14 +61,22 @@ export const CuisinePortal = ({ user, plannedTasks, notifications, incidents, on
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="card-hover cursor-pointer" onClick={() => onNavigate("myTasks")}>
-          <CardContent className="p-5">
-            <Icon name="ClipboardList" className="mb-3 text-3xl text-amber-600" />
-            <h3 className="mb-1 font-semibold">Mes tâches</h3>
-            <p className="text-sm text-slate-600">Consulter et mettre à jour</p>
-          </CardContent>
-        </Card>
+      <div>
+        <h2 className="mb-4 text-lg font-bold text-[hsl(var(--brand-navy))]">Modules cuisine</h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {modules.map((mod) => (
+            <Card key={mod.id} className="card-hover cursor-pointer" onClick={() => onNavigate(mod.id)}>
+              <CardContent className="p-5">
+                <Icon name={mod.icon} className={`mb-3 text-3xl ${mod.color}`} />
+                <h3 className="mb-1 font-semibold">{mod.title}</h3>
+                <p className="text-sm text-slate-600">{mod.desc}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card className="card-hover cursor-pointer" onClick={() => onNavigate("reportIncident")}>
           <CardContent className="p-5">
             <Icon name="AlertCircle" className="mb-3 text-3xl text-red-600" />

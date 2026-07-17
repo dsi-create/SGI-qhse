@@ -50,6 +50,13 @@ import { TableauSuiviAES } from '@/components/qhse/TableauSuiviAES';
 import { DailyRoundsList, DailyRoundsView } from '@/components/rounds';
 import { NetworkEquipmentList, NetworkSubscriptionsList } from '@/components/network';
 import { InventoryList } from '@/components/inventory/InventoryList';
+import {
+  CuisineGroceryList,
+  CuisineExpensesList,
+  CuisinePatientMealsList,
+  CuisineEmployeeMealsList,
+  CuisineMealPlanning,
+} from '@/components/cuisine';
 import { 
   filterIncidentsByRole, 
   filterVisitorsByRole, 
@@ -931,6 +938,16 @@ const DashboardPage = (props: DashboardPageProps) => {
         return <NetworkSubscriptionsList user={user} />;
       case 'inventory':
         return <InventoryList />;
+      case 'cuisineGrocery':
+        return <CuisineGroceryList />;
+      case 'cuisineExpenses':
+        return <CuisineExpensesList />;
+      case 'cuisinePatientMeals':
+        return <CuisinePatientMealsList />;
+      case 'cuisineEmployeeMeals':
+        return <CuisineEmployeeMealsList />;
+      case 'cuisineMealPlanning':
+        return <CuisineMealPlanning />;
       default:
         return <SuperadminDashboard 
           incidents={props.incidents} 

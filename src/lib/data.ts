@@ -54,6 +54,11 @@ export const allPermissions = [
   { id: 'networkSubscriptions', name: 'Abonnements Réseau', icon: 'CreditCard' },
   { id: 'qhseAnomalies', name: 'Anomalies QHSE', icon: 'AlertTriangle' },
   { id: 'inventory', name: 'Inventaire', icon: 'PackageSearch' },
+  { id: 'cuisineGrocery', name: 'Inventaire courses', icon: 'PackageSearch' },
+  { id: 'cuisineExpenses', name: 'Dépenses cuisine', icon: 'CreditCard' },
+  { id: 'cuisinePatientMeals', name: 'Repas patients', icon: 'HeartPulse' },
+  { id: 'cuisineEmployeeMeals', name: 'Repas employés', icon: 'Users' },
+  { id: 'cuisineMealPlanning', name: 'Planning menus', icon: 'CalendarDays' },
 ];
 
 const findPerms = (ids: string[]) => allPermissions.filter(p => ids.includes(p.id));
@@ -132,7 +137,11 @@ const findPerms = (ids: string[]) => allPermissions.filter(p => ids.includes(p.i
   // Personnel cuisine
   cuisine: [
     { id: 'portalCuisine', name: 'Mon Portail', icon: 'Utensils' },
-    ...findPerms(['myTasks', 'personalInfo', 'reportIncident', 'reportSecurityIncident', 'reportBiomedicalIncident'])
+    ...findPerms([
+      'cuisineGrocery', 'cuisineExpenses', 'cuisinePatientMeals', 'cuisineEmployeeMeals', 'cuisineMealPlanning',
+      'planningTasks', 'myTasks', 'personalInfo',
+      'reportIncident', 'reportSecurityIncident', 'reportBiomedicalIncident',
+    ])
   ],
 };
 
