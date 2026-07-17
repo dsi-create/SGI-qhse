@@ -28,11 +28,15 @@ const roleDisplay: Record<User['role'], string> = {
     superviseur_agent_securite: "Superviseur Sécurité",
     superviseur_agent_entretien: "Superviseur Entretien",
     superviseur_technicien: "Superviseur Technique",
+    administrateur_reseau: "Administrateur Réseau",
     medecin: "Médecin",
+    biomedical: "Biomédical",
+    dop: "DOP",
+    employe: "Employé",
     buandiere: "Buandière",
     technicien_polyvalent: "Technicien Polyvalent",
-    administrateur_reseau: "Administrateur Réseau",
-    employe: "Employé",
+    responsable_services_generaux: "Responsable Services Généraux",
+    cuisine: "Cuisine",
 };
 
 const roleColors: Record<User['role'], string> = {
@@ -47,10 +51,14 @@ const roleColors: Record<User['role'], string> = {
     technicien: "bg-orange-50 text-orange-600 border-orange-200",
     secretaire: "bg-pink-100 text-pink-700 border-pink-300",
     medecin: "bg-red-100 text-red-700 border-red-300",
+    biomedical: "bg-rose-100 text-rose-700 border-rose-300",
+    dop: "bg-violet-100 text-violet-700 border-violet-300",
     buandiere: "bg-teal-100 text-teal-700 border-teal-300",
     technicien_polyvalent: "bg-orange-100 text-orange-700 border-orange-300",
     administrateur_reseau: "bg-indigo-100 text-indigo-700 border-indigo-300",
     employe: "bg-slate-100 text-slate-700 border-slate-300",
+    responsable_services_generaux: "bg-sky-100 text-sky-800 border-sky-300",
+    cuisine: "bg-amber-100 text-amber-800 border-amber-300",
 };
 
 const getEffectivePermissions = (user: User) => {
@@ -84,12 +92,20 @@ export const UserManagement = ({ currentUserRole, users, addUser, deleteUser, up
       return userToManage.role !== 'superadmin';
     }
     if (currentUserRole === 'superviseur_qhse') {
-      // Le superviseur QHSE peut gérer tous les utilisateurs sauf superadmin et superviseur_qhse
-      // Il est responsable des agents de sécurité, entretien et techniciens
       return (
         userToManage.role !== 'superadmin' &&
         userToManage.role !== 'superviseur_qhse'
       );
+    }
+    if (currentUserRole === 'responsable_services_generaux') {
+      const managed: UserRole[] = [
+        'agent_securite', 'superviseur_agent_securite',
+        'agent_entretien', 'superviseur_agent_entretien',
+        'buandiere', 'biomedical', 'assistante_qhse',
+        'technicien', 'superviseur_technicien', 'technicien_polyvalent',
+        'cuisine',
+      ];
+      return managed.includes(userToManage.role);
     }
     if (currentUserRole === 'superviseur_agent_securite') {
       return userToManage.role === 'agent_securite';
@@ -107,6 +123,16 @@ export const UserManagement = ({ currentUserRole, users, addUser, deleteUser, up
     if (currentUserRole === 'superadmin') return true;
     if (currentUserRole === 'superviseur_qhse') {
       return user.role !== 'superadmin' && user.role !== 'superviseur_qhse';
+    }
+    if (currentUserRole === 'responsable_services_generaux') {
+      const managed: UserRole[] = [
+        'agent_securite', 'superviseur_agent_securite',
+        'agent_entretien', 'superviseur_agent_entretien',
+        'buandiere', 'biomedical', 'assistante_qhse',
+        'technicien', 'superviseur_technicien', 'technicien_polyvalent',
+        'cuisine', 'responsable_services_generaux',
+      ];
+      return managed.includes(user.role);
     }
     if (currentUserRole === 'superviseur_agent_securite') {
       return user.role === 'agent_securite' || user.role === 'superviseur_agent_securite';
@@ -146,7 +172,7 @@ export const UserManagement = ({ currentUserRole, users, addUser, deleteUser, up
     return result;
   }, [filteredBySearch, filterRole]);
 
-  const canAddUser = ['superadmin', 'superviseur_qhse', 'superviseur_agent_securite', 'superviseur_agent_entretien', 'superviseur_technicien'].includes(currentUserRole);
+  const canAddUser = ['superadmin', 'superviseur_qhse', 'responsable_services_generaux', 'superviseur_agent_securite', 'superviseur_agent_entretien', 'superviseur_technicien'].includes(currentUserRole);
 
   // Statistiques par rôle
   const roleStats = useMemo(() => {

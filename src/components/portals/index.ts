@@ -14,4 +14,6 @@ export { BiomedicalPortal } from './BiomedicalPortal';
 export { BuanderiePortal } from './BuanderiePortal';
 export { TechnicienPolyvalentPortal } from './TechnicienPolyvalentPortal';
 export { AdministrateurReseauPortal } from './AdministrateurReseauPortal';
+export { ResponsableServicesGenerauxPortal } from './ResponsableServicesGenerauxPortal';
+export { CuisinePortal } from './CuisinePortal';
 

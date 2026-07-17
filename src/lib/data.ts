@@ -10,6 +10,8 @@ export const allPermissions = [
   { id: 'portalSecretaire', name: 'Portail Secrétaire', icon: 'Home' },
   { id: 'portalBuanderie', name: 'Portail Buanderie', icon: 'Shirt' },
   { id: 'portalTechnicienPolyvalent', name: 'Portail Technicien Polyvalent', icon: 'Wrench' },
+  { id: 'portalResponsableServicesGeneraux', name: 'Portail Services Généraux', icon: 'Building2' },
+  { id: 'portalCuisine', name: 'Portail Cuisine', icon: 'Utensils' },
   { id: 'dashboardSuperadmin', name: 'Dashboard Superadmin', icon: 'Crown' },
   { id: 'dashboardSecurite', name: 'Dashboard Sécurité', icon: 'Shield' },
   { id: 'dashboardEntretien', name: 'Dashboard Entretien', icon: 'SprayCan' },
@@ -114,6 +116,23 @@ const findPerms = (ids: string[]) => allPermissions.filter(p => ids.includes(p.i
   administrateur_reseau: [
     { id: 'portalAdministrateurReseau', name: 'Mon Portail', icon: 'Home' },
     ...findPerms(['networkEquipment', 'networkSubscriptions', 'inventory', 'dailyRoundsReseau', 'myTasks', 'planningTasks', 'qhseTickets', 'personalInfo', 'reportSecurityIncident', 'reportBiomedicalIncident'])
+  ],
+  // Responsable des services généraux : supervision sécurité, cuisine, buanderie, entretien, bioméd, assistante QHSE, technicien
+  responsable_services_generaux: [
+    { id: 'portalResponsableServicesGeneraux', name: 'Mon Portail', icon: 'Building2' },
+    ...findPerms([
+      'dashboardSecurite', 'dashboardEntretien', 'dashboardTechnicien', 'dashboardQHSE',
+      'qhseTickets', 'securityIncidents', 'visitorLog', 'qhseLaundry', 'biomedical',
+      'planningTasks', 'kpiDashboard', 'settings', 'personalInfo',
+      'reportIncident', 'reportSecurityIncident', 'reportMaintenanceIncident', 'reportBiomedicalIncident',
+      'qhseAudits', 'qhseRisks', 'qhseAnomalies', 'qhseWaste', 'qhseSterilizationRegister',
+      'maintenanceHistory', 'dailyRoundsView', 'inventory',
+    ])
+  ],
+  // Personnel cuisine
+  cuisine: [
+    { id: 'portalCuisine', name: 'Mon Portail', icon: 'Utensils' },
+    ...findPerms(['myTasks', 'personalInfo', 'reportIncident', 'reportSecurityIncident', 'reportBiomedicalIncident'])
   ],
 };
 

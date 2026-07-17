@@ -72,6 +72,7 @@ export const AddUserDialog = ({ onAddUser, currentUserRole, isOpen, onOpenChange
       case 'superadmin':
         return (
           <>
+            <SelectItem value="responsable_services_generaux">Responsable Services Généraux</SelectItem>
             <SelectItem value="superviseur_qhse">Superviseur QHSE</SelectItem>
             <SelectItem value="assistante_qhse">Assistante QHSE</SelectItem>
             <SelectItem value="superviseur_agent_securite">Superviseur Agent de Sécurité</SelectItem>
@@ -81,10 +82,13 @@ export const AddUserDialog = ({ onAddUser, currentUserRole, isOpen, onOpenChange
             <SelectItem value="technicien">Technicien</SelectItem>
             <SelectItem value="agent_entretien">Agent d'Entretien</SelectItem>
             <SelectItem value="agent_securite">Agent de Sécurité</SelectItem>
+            <SelectItem value="biomedical">Biomédical</SelectItem>
             <SelectItem value="medecin">Médecin</SelectItem>
             <SelectItem value="buandiere">Buandière</SelectItem>
+            <SelectItem value="cuisine">Cuisine</SelectItem>
             <SelectItem value="technicien_polyvalent">Technicien Polyvalent</SelectItem>
             <SelectItem value="administrateur_reseau">Administrateur Réseau</SelectItem>
+            <SelectItem value="employe">Employé</SelectItem>
           </>
         );
       case 'superviseur_qhse':
@@ -98,10 +102,28 @@ export const AddUserDialog = ({ onAddUser, currentUserRole, isOpen, onOpenChange
             <SelectItem value="technicien">Technicien</SelectItem>
             <SelectItem value="agent_entretien">Agent d'Entretien</SelectItem>
             <SelectItem value="agent_securite">Agent de Sécurité</SelectItem>
+            <SelectItem value="biomedical">Biomédical</SelectItem>
             <SelectItem value="medecin">Médecin</SelectItem>
             <SelectItem value="buandiere">Buandière</SelectItem>
+            <SelectItem value="cuisine">Cuisine</SelectItem>
             <SelectItem value="technicien_polyvalent">Technicien Polyvalent</SelectItem>
             <SelectItem value="administrateur_reseau">Administrateur Réseau</SelectItem>
+          </>
+        );
+      case 'responsable_services_generaux':
+        return (
+          <>
+            <SelectItem value="superviseur_agent_securite">Superviseur Agent de Sécurité</SelectItem>
+            <SelectItem value="agent_securite">Agent de Sécurité</SelectItem>
+            <SelectItem value="superviseur_agent_entretien">Superviseur Agent d'Entretien</SelectItem>
+            <SelectItem value="agent_entretien">Agent d'Entretien</SelectItem>
+            <SelectItem value="buandiere">Buandière</SelectItem>
+            <SelectItem value="cuisine">Cuisine</SelectItem>
+            <SelectItem value="biomedical">Biomédical</SelectItem>
+            <SelectItem value="assistante_qhse">Assistante QHSE</SelectItem>
+            <SelectItem value="superviseur_technicien">Superviseur Technicien</SelectItem>
+            <SelectItem value="technicien">Technicien</SelectItem>
+            <SelectItem value="technicien_polyvalent">Technicien Polyvalent</SelectItem>
           </>
         );
       case 'superviseur_agent_securite':
@@ -111,7 +133,7 @@ export const AddUserDialog = ({ onAddUser, currentUserRole, isOpen, onOpenChange
       case 'superviseur_technicien':
         return <SelectItem value="technicien">Technicien</SelectItem>;
       default:
-        return null; // Other roles cannot add users
+        return null;
     }
   };
 

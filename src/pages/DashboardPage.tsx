@@ -12,7 +12,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-import { SuperAdminPortal, AgentSecuritePortal, AgentEntretienPortal, TechnicienPortal, SuperviseurQHSEPortal, MedecinPortal, SecretairePortal, SuperviseurSecuritePortal, BiomedicalPortal, UserPortal, BuanderiePortal, TechnicienPolyvalentPortal, AdministrateurReseauPortal } from '@/components/portals';
+import { SuperAdminPortal, AgentSecuritePortal, AgentEntretienPortal, TechnicienPortal, SuperviseurQHSEPortal, MedecinPortal, SecretairePortal, SuperviseurSecuritePortal, BiomedicalPortal, UserPortal, BuanderiePortal, TechnicienPolyvalentPortal, AdministrateurReseauPortal, ResponsableServicesGenerauxPortal, CuisinePortal } from '@/components/portals';
 // Import des nouveaux composants de tableau de bord
 import { SuperadminDashboard } from '@/components/dashboards/SuperadminDashboard';
 import { SecurityDashboard } from '@/components/dashboards/SecurityDashboard';
@@ -394,6 +394,12 @@ const DashboardPage = (props: DashboardPageProps) => {
         return 'portalTechnicienPolyvalent';
       case 'administrateur_reseau':
         return 'portalAdministrateurReseau';
+      case 'responsable_services_generaux':
+        return 'portalResponsableServicesGeneraux';
+      case 'cuisine':
+        return 'portalCuisine';
+      case 'assistante_qhse':
+        return 'portalSuperviseurQHSE';
       default:
         if (userTabs.length > 0) return userTabs[0].id;
         // Si le rôle n'est pas reconnu, essayer de trouver le portail dans les tabs
@@ -673,6 +679,25 @@ const DashboardPage = (props: DashboardPageProps) => {
           plannedTasks={filteredData.plannedTasks}
           onNavigate={setActiveTab}
         />;
+      case 'portalResponsableServicesGeneraux':
+        return <ResponsableServicesGenerauxPortal
+          user={user}
+          incidents={filteredData.incidents}
+          visitors={filteredData.visitors}
+          plannedTasks={filteredData.plannedTasks}
+          notifications={props.notifications}
+          users={props.users}
+          biomedicalEquipment={filteredData.biomedicalEquipment}
+          onNavigate={setActiveTab}
+        />;
+      case 'portalCuisine':
+        return <CuisinePortal
+          user={user}
+          plannedTasks={filteredData.plannedTasks}
+          notifications={props.notifications}
+          incidents={filteredData.incidents}
+          onNavigate={setActiveTab}
+        />;
       
       // Modules existants
       case 'dashboardSuperadmin':
@@ -714,7 +739,7 @@ const DashboardPage = (props: DashboardPageProps) => {
         }
         // Le superviseur QHSE voit tous les tickets (sauf biomedical)
         // Les autres superviseurs voient uniquement leur service
-        const serviceFilter = user.role === 'superviseur_qhse' ? 'all' :
+        const serviceFilter = user.role === 'superviseur_qhse' || user.role === 'responsable_services_generaux' ? 'all' :
                               user.role === 'superviseur_agent_securite' ? 'securite' :
                               user.role === 'superviseur_agent_entretien' ? 'entretien' :
                               user.role === 'superviseur_technicien' ? 'technique' : 'all';
@@ -779,13 +804,13 @@ const DashboardPage = (props: DashboardPageProps) => {
       case 'doctors':
         return <DoctorList doctors={props.doctors} rooms={props.rooms} onAddBooking={props.addBooking} />;
       case 'settings':
-        if (user.role !== 'superadmin') {
+        if (!['superadmin', 'responsable_services_generaux', 'superviseur_qhse'].includes(user.role)) {
           return (
             <div className="p-6">
               <Alert variant="destructive" className="max-w-xl">
                 <AlertTitle>Accès refusé</AlertTitle>
                 <AlertDescription>
-                  La gestion des utilisateurs est réservée au Super Admin.
+                  Vous n&apos;avez pas l&apos;autorisation de gérer les utilisateurs.
                 </AlertDescription>
               </Alert>
             </div>
@@ -814,7 +839,7 @@ const DashboardPage = (props: DashboardPageProps) => {
       case 'planningTasks':
         // Le superviseur QHSE voit toutes les tâches (il est responsable de tous les agents)
         // Les autres superviseurs voient uniquement les tâches de leurs agents
-        const tasksForSupervisor = user.role === 'superviseur_qhse' ? props.plannedTasks :
+        const tasksForSupervisor = user.role === 'superviseur_qhse' || user.role === 'responsable_services_generaux' ? props.plannedTasks :
                                    user.role === 'superviseur_agent_securite' ? props.plannedTasks.filter(t => props.users[Object.keys(props.users).find(key => props.users[key].id === t.assigned_to)!]?.role === 'agent_securite') :
                                    user.role === 'superviseur_agent_entretien' ? props.plannedTasks.filter(t => props.users[Object.keys(props.users).find(key => props.users[key].id === t.assigned_to)!]?.role === 'agent_entretien') :
                                    user.role === 'superviseur_technicien' ? props.plannedTasks.filter(t => props.users[Object.keys(props.users).find(key => props.users[key].id === t.assigned_to)!]?.role === 'technicien') :

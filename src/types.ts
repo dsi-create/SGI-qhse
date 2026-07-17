@@ -15,7 +15,9 @@ export type UserRole =
   | 'dop'
   | 'employe'
   | 'buandiere'
-  | 'technicien_polyvalent';
+  | 'technicien_polyvalent'
+  | 'responsable_services_generaux'
+  | 'cuisine';
 
 export type Civility = 'M.' | 'Mme' | 'Mlle';
 

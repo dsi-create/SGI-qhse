@@ -34,9 +34,21 @@ const getSupervisedAgents = (supervisorRole: UserRole, users: Users): string[] =
       break;
     case 'superviseur_qhse':
       // Le superviseur QHSE est le responsable des agents de sécurité, entretien et techniciens
-      // Il supervise tous ces agents
       Object.values(users).forEach(user => {
         if (['agent_securite', 'agent_entretien', 'technicien'].includes(user.role)) {
+          agentIds.push(user.id);
+        }
+      });
+      break;
+    case 'responsable_services_generaux':
+      Object.values(users).forEach(user => {
+        if ([
+          'agent_securite', 'superviseur_agent_securite',
+          'agent_entretien', 'superviseur_agent_entretien',
+          'buandiere', 'biomedical', 'assistante_qhse',
+          'technicien', 'superviseur_technicien', 'technicien_polyvalent',
+          'cuisine',
+        ].includes(user.role)) {
           agentIds.push(user.id);
         }
       });
@@ -77,6 +89,8 @@ export const filterIncidentsByRole = (
     employe: ['securite', 'technique', 'entretien', 'biomedical'],
     dop: ['securite', 'technique', 'entretien', 'biomedical'],
     buandiere: ['securite', 'technique', 'entretien', 'biomedical'],
+    cuisine: ['securite', 'technique', 'entretien', 'biomedical'],
+    responsable_services_generaux: ['securite', 'technique', 'entretien', 'biomedical'],
   };
 
   const scopedServices = roleServiceScope[currentUser.role];
