@@ -10,32 +10,33 @@
     --brand-teal: 173 80% 32%;
     --brand-navy: 215 45% 18%;
 
-    --background: 210 40% 98%;
-    --foreground: 215 45% 18%;
+    /* Soft slate-cyan ground so white cards pop */
+    --background: 210 28% 93%;
+    --foreground: 215 45% 16%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 45% 18%;
+    --card-foreground: 215 45% 16%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 45% 18%;
+    --popover-foreground: 215 45% 16%;
 
     --primary: 191 91% 37%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 215 45% 18%;
+    --secondary: 210 24% 90%;
+    --secondary-foreground: 215 45% 16%;
 
-    --muted: 210 30% 96%;
-    --muted-foreground: 215 16% 42%;
+    --muted: 210 22% 90%;
+    --muted-foreground: 215 18% 34%;
 
-    --accent: 186 70% 94%;
-    --accent-foreground: 191 91% 28%;
+    --accent: 186 55% 92%;
+    --accent-foreground: 191 91% 26%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --border: 214 24% 82%;
+    --input: 214 24% 82%;
     --ring: 191 91% 37%;
 
     --radius: 0.875rem;
@@ -219,10 +220,10 @@
   }
 
   .nav-link {
-    @apply relative flex items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-cyan-50 hover:text-cyan-700;
+    @apply relative flex items-center gap-2 whitespace-nowrap rounded-full border border-transparent px-3.5 py-2 text-sm font-semibold text-slate-700 transition-all duration-200 hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-800;
   }
 
   .nav-link-active {
-    @apply bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 text-white shadow-md shadow-cyan-600/20 hover:bg-none hover:text-white;
+    @apply border-transparent bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 text-white shadow-md shadow-cyan-600/25 hover:border-transparent hover:bg-none hover:text-white;
   }
 }

@@ -922,7 +922,7 @@ const DashboardPage = (props: DashboardPageProps) => {
 
   return (
     <div className="app-shell">
-      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-slate-300/90 bg-white/95 shadow-sm backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-4 py-3.5 md:px-6">
           <div className="flex min-w-0 items-center gap-3 md:gap-4">
             {isMobile && (
@@ -1016,8 +1016,8 @@ const DashboardPage = (props: DashboardPageProps) => {
         </div>
 
         {userTabs && userTabs.length > 0 && !isMobile && (
-          <nav className="border-t border-slate-100 bg-white">
-            <div className="mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-4 py-2.5 md:px-6">
+          <nav className="border-t border-slate-200 bg-slate-50/90">
+            <div className="mx-auto flex max-w-[1400px] gap-1.5 overflow-x-auto px-4 py-2.5 md:px-6">
               <NavLinks />
             </div>
           </nav>
