@@ -1,5 +1,10 @@
--- Ajoute les rôles responsable_services_generaux et cuisine à l'ENUM profiles.role
--- À exécuter sur hospital_management (MySQL)
+-- =============================================================================
+-- MySQL uniquement (WAMP / hospital_management)
+-- =============================================================================
+-- Ne pas exécuter ce fichier dans Supabase (PostgreSQL).
+-- Pour Supabase, utiliser :
+--   supabase/migrations/0034_add_responsable_services_generaux_and_cuisine_roles.sql
+-- =============================================================================
 
 USE hospital_management;
 
