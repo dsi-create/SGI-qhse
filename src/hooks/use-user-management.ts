@@ -2,7 +2,6 @@ import { User, Users, UserRole, Civility } from '@/types';
 import { showError, showSuccess } from '@/utils/toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Define a specific type for the user data passed to addUser
 interface NewUserData {
   first_name: string;
   last_name: string;
@@ -16,7 +15,7 @@ interface NewUserData {
 
 interface UseUserManagementProps {
   setUsers: React.Dispatch<React.SetStateAction<Users>>;
-  fetchAllProfiles: () => Promise<Users>; // Add fetchAllProfiles to props
+  fetchAllProfiles: () => Promise<Users>;
 }
 
 export const useUserManagement = ({ setUsers, fetchAllProfiles }: UseUserManagementProps) => {
@@ -27,46 +26,36 @@ export const useUserManagement = ({ setUsers, fetchAllProfiles }: UseUserManagem
     }
 
     try {
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: user.email,
-        password: user.password,
-        options: {
-          data: {
-            username,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            role: user.role,
-            service: user.position,
-            civility: user.civility,
-            pin: user.role === 'medecin' ? user.pin : null,
-          },
+      // Création via Edge Function Admin (email_confirm: true) → pas d'e-mail → pas de rate limit
+      const { data, error } = await supabase.functions.invoke('create-user', {
+        body: {
+          email: user.email,
+          password: user.password,
+          username,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          role: user.role,
+          service: user.position,
+          civility: user.civility,
+          pin: user.role === 'medecin' ? user.pin : null,
         },
       });
-      if (signUpError) throw signUpError;
-      const createdUser = authData.user;
-      if (!createdUser) throw new Error('Utilisateur non créé');
 
-      // Créer explicitement le profil (INSERT) plutôt qu'un upsert avec onConflict=id
-      const { error: insertError } = await supabase.from('profiles').insert([{
-        id: createdUser.id,
-        username,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        role: user.role,
-        service: user.position,
-        civility: user.civility,
-        pin: user.role === 'medecin' ? user.pin : null,
-      }]);
-      if (insertError) throw insertError;
+      if (error) {
+        const msg = error.message || '';
+        if (/rate limit|email rate/i.test(msg)) {
+          throw new Error(
+            "Limite d'e-mails Supabase atteinte. Déployez la fonction create-user ou réessayez dans ~1 h.",
+          );
+        }
+        throw error;
+      }
 
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', createdUser.id)
-        .maybeSingle();
-      if (profileError) throw profileError;
-      if (!profile) throw new Error('Profil non trouvé');
+      if (!data?.success || !data?.user) {
+        throw new Error(data?.message || "Échec de la création de l'utilisateur.");
+      }
+
+      const profile = data.user;
       const newUserWithId: User = {
         id: profile.id,
         username: profile.username,
@@ -78,30 +67,45 @@ export const useUserManagement = ({ setUsers, fetchAllProfiles }: UseUserManagem
         position: profile.service,
         role: profile.role,
         pin: profile.pin,
-        added_permissions: Array.isArray(profile.added_permissions) ? profile.added_permissions : (profile.added_permissions ? JSON.parse(profile.added_permissions) : []),
-        removed_permissions: Array.isArray(profile.removed_permissions) ? profile.removed_permissions : (profile.removed_permissions ? JSON.parse(profile.removed_permissions) : []),
+        added_permissions: Array.isArray(profile.added_permissions)
+          ? profile.added_permissions
+          : profile.added_permissions
+            ? JSON.parse(profile.added_permissions)
+            : [],
+        removed_permissions: Array.isArray(profile.removed_permissions)
+          ? profile.removed_permissions
+          : profile.removed_permissions
+            ? JSON.parse(profile.removed_permissions)
+            : [],
       };
-      setUsers(prev => ({ ...prev, [username]: newUserWithId }));
+
+      setUsers((prev) => ({ ...prev, [username]: newUserWithId }));
       showSuccess(`L'utilisateur ${newUserWithId.name} a été ajouté avec succès.`);
     } catch (error: any) {
-      showError(error?.message || "Erreur lors de la création de l'utilisateur.");
+      const msg = error?.message || "Erreur lors de la création de l'utilisateur.";
+      if (/rate limit|email rate/i.test(msg)) {
+        showError(
+          "Limite d'e-mails Supabase atteinte. Attendez ~1 h, ou désactivez la confirmation e-mail dans Authentication → Providers → Email.",
+        );
+      } else {
+        showError(msg);
+      }
     }
   };
 
   const deleteUser = async (username: string) => {
     try {
-      const userToDelete = Object.values(await fetchAllProfiles()).find(u => u.username === username);
+      const userToDelete = Object.values(await fetchAllProfiles()).find((u) => u.username === username);
 
       if (!userToDelete) {
-        showError("Utilisateur non trouvé.");
+        showError('Utilisateur non trouvé.');
         return;
       }
 
       const { error } = await supabase.from('profiles').delete().eq('id', userToDelete.id);
       if (error) throw error;
 
-      // Update local state after successful deletion
-      setUsers(prev => {
+      setUsers((prev) => {
         const newUsers = { ...prev };
         delete newUsers[username];
         return newUsers;
@@ -112,29 +116,34 @@ export const useUserManagement = ({ setUsers, fetchAllProfiles }: UseUserManagem
     }
   };
 
-  const updateUserPermissions = async (username: string, permissions: { added: string[], removed: string[] }) => {
+  const updateUserPermissions = async (
+    username: string,
+    permissions: { added: string[]; removed: string[] },
+  ) => {
     try {
-      const userToUpdate = Object.values(await fetchAllProfiles()).find(u => u.username === username);
+      const userToUpdate = Object.values(await fetchAllProfiles()).find((u) => u.username === username);
 
       if (!userToUpdate) {
-        showError("Utilisateur non trouvé.");
+        showError('Utilisateur non trouvé.');
         return;
       }
 
-      const { error } = await supabase.from('profiles').update({
-        added_permissions: permissions.added,
-        removed_permissions: permissions.removed,
-      }).eq('id', userToUpdate.id);
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          added_permissions: permissions.added,
+          removed_permissions: permissions.removed,
+        })
+        .eq('id', userToUpdate.id);
       if (error) throw error;
 
-      // Update local state
-      setUsers(prev => ({
+      setUsers((prev) => ({
         ...prev,
         [username]: {
           ...prev[username],
           added_permissions: permissions.added,
           removed_permissions: permissions.removed,
-        }
+        },
       }));
       showSuccess("Les permissions de l'utilisateur ont été mises à jour.");
     } catch (error: any) {
