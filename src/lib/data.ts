@@ -123,7 +123,7 @@ const findPerms = (ids: string[]) => allPermissions.filter(p => ids.includes(p.i
     ...findPerms([
       'dashboardSecurite', 'dashboardEntretien', 'dashboardTechnicien', 'dashboardQHSE',
       'qhseTickets', 'securityIncidents', 'visitorLog', 'qhseLaundry', 'biomedical',
-      'planningTasks', 'kpiDashboard', 'settings', 'personalInfo',
+      'planningTasks', 'kpiDashboard', 'personalInfo',
       'reportIncident', 'reportSecurityIncident', 'reportMaintenanceIncident', 'reportBiomedicalIncident',
       'qhseAudits', 'qhseRisks', 'qhseAnomalies', 'qhseWaste', 'qhseSterilizationRegister',
       'maintenanceHistory', 'dailyRoundsView', 'inventory',

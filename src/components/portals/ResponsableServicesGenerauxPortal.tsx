@@ -150,7 +150,7 @@ export const ResponsableServicesGenerauxPortal = ({
           value={team.length}
           iconName="Users"
           colorClass="bg-cyan-100 text-cyan-700"
-          onClick={() => onNavigate("settings")}
+          onClick={() => onNavigate("kpiDashboard")}
         />
         <DashboardCard
           title="Incidents ouverts"
@@ -247,11 +247,11 @@ export const ResponsableServicesGenerauxPortal = ({
               <p className="text-sm text-slate-600">Indicateurs globaux</p>
             </CardContent>
           </Card>
-          <Card className="card-hover cursor-pointer" onClick={() => onNavigate("settings")}>
+          <Card className="card-hover cursor-pointer" onClick={() => onNavigate("inventory")}>
             <CardContent className="p-5">
-              <Icon name="Settings" className="mb-3 text-3xl text-slate-700" />
-              <h3 className="mb-1 font-semibold">Gestion utilisateurs</h3>
-              <p className="text-sm text-slate-600">Créer et gérer les équipes</p>
+              <Icon name="PackageSearch" className="mb-3 text-3xl text-slate-700" />
+              <h3 className="mb-1 font-semibold">Inventaire</h3>
+              <p className="text-sm text-slate-600">Suivre les ressources</p>
             </CardContent>
           </Card>
         </div>

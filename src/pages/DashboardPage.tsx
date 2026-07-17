@@ -804,7 +804,7 @@ const DashboardPage = (props: DashboardPageProps) => {
       case 'doctors':
         return <DoctorList doctors={props.doctors} rooms={props.rooms} onAddBooking={props.addBooking} />;
       case 'settings':
-        if (!['superadmin', 'responsable_services_generaux', 'superviseur_qhse'].includes(user.role)) {
+        if (user.role !== 'superadmin') {
           return (
             <div className="p-6">
               <Alert variant="destructive" className="max-w-xl">
