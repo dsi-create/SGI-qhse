@@ -42,13 +42,16 @@ export const useUserManagement = ({ setUsers, fetchAllProfiles }: UseUserManagem
       });
 
       if (error) {
-        const msg = error.message || '';
+        const responseBody = 'context' in error && error.context instanceof Response
+          ? await error.context.json().catch(() => null)
+          : null;
+        const msg = responseBody?.message || error.message || '';
         if (/rate limit|email rate/i.test(msg)) {
           throw new Error(
             "Limite d'e-mails Supabase atteinte. Déployez la fonction create-user ou réessayez dans ~1 h.",
           );
         }
-        throw error;
+        throw new Error(msg);
       }
 
       if (!data?.success || !data?.user) {

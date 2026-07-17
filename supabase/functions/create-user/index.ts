@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://qhsecdl.netlify.app",
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
@@ -58,12 +58,25 @@ serve(async (req) => {
       .maybeSingle();
 
     if (profileError || !requesterProfile) {
-      return jsonResponse({ success: false, message: "Requester profile not found." }, 403);
+      return jsonResponse(
+        {
+          success: false,
+          message: "Profil du demandeur introuvable. Reconnectez-vous ou corrigez la ligne profiles liée à ce compte.",
+          details: profileError,
+        },
+        403,
+      );
     }
 
     const requesterRole = (requesterProfile.role as string) ?? "";
     if (!CREATOR_ROLES.includes(requesterRole)) {
-      return jsonResponse({ success: false, message: "Vous n'êtes pas autorisé à créer des utilisateurs." }, 403);
+      return jsonResponse(
+        {
+          success: false,
+          message: `Vous n'êtes pas autorisé à créer des utilisateurs (rôle actuel : ${requesterRole || "vide"}).`,
+        },
+        403,
+      );
     }
 
     let body: {
@@ -115,7 +128,7 @@ serve(async (req) => {
 
     if (createError || !created.user) {
       return jsonResponse(
-        { success: false, message: createError?.message || "Échec de la création Auth." },
+        { success: false, message: createError?.message || "Échec de la création Auth.", details: createError },
         400,
       );
     }
